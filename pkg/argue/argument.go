@@ -6,7 +6,7 @@ package argue
 type Argument struct {
 	Description string
 	Version     string
-	Facts       []Fact
+	Facts       []*Fact
 }
 
 // NewArgument accepts a description and will return
@@ -17,6 +17,20 @@ func NewArgument(desc string) Argument {
 	agmt.Description = desc
 
 	return agmt
+}
+
+// AddBool adds a new bool fact to the argument with
+// the given parameters.
+func (agmt *Argument) AddBool(name string, help string) *Fact {
+	var boolFact *Fact
+	boolFact.Type = FactTypeBool
+	boolFact.FullName = name
+	boolFact.ShortName = name[0]
+	boolFact.Positional = false
+	boolFact.Required = false
+
+	agmt.Facts = append(agmt.Facts, boolFact)
+	return boolFact
 }
 
 // Propose accepts a boolean that determines if the
