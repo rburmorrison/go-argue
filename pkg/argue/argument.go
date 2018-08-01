@@ -5,6 +5,8 @@ package argue
 // arguments.
 type Argument struct {
 	Description string
+	Version     string
+	Facts       []Fact
 }
 
 // NewArgument accepts a description and will return

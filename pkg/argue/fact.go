@@ -16,5 +16,10 @@ const (
 // follow when parsing command-line arguments. Facts
 // are akin to flags.
 type Fact struct {
-	Type FactType
+	Type       FactType
+	Help       string
+	FullName   string
+	ShortName  byte
+	Positional bool
+	Required   bool
 }
