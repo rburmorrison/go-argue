@@ -18,3 +18,14 @@ func NewArgument(desc string) Argument {
 
 	return agmt
 }
+
+// Propose accepts a boolean that determines if the
+// proposed argument must succeed or not.
+func (agmt Argument) Propose(ms bool) bool {
+	return true
+}
+
+// PrintUsage writes the usage information of the
+// recieved argument to the standard output.
+func (agmt Argument) PrintUsage() {
+}
