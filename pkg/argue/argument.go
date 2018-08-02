@@ -1,7 +1,6 @@
 package argue
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -37,16 +36,10 @@ func NewEmptyArgument() Argument {
 	return Argument{}
 }
 
-// AddBool adds a new bool fact to the argument with
-// the given parameters.
-func (agmt *Argument) AddBool(name string, help string) *Fact {
-	var boolFact Fact
-	boolFact.Type = FactTypeBool
-	boolFact.FullName = name
-	boolFact.ShortName = name[0]
-	boolFact.Positional = false
-	boolFact.Required = false
-
+// AddFact adds a new fact to the argument with the
+// given parameters.
+func (agmt *Argument) AddFact(ft FactType, name string, help string) *Fact {
+	boolFact := NewFact(ft, help, name, determineShortName(*agmt, name), false, false)
 	agmt.Facts = append(agmt.Facts, &boolFact)
 	agmt.SortFacts()
 	return &boolFact
@@ -62,8 +55,21 @@ func (agmt Argument) Propose(ms bool) bool {
 // type.
 func (agmt *Argument) SortFacts() {
 	sort.Slice(agmt.Facts, func(i, j int) bool {
-		return int(agmt.Facts[i].Type) < int(agmt.Facts[j].Type)
+		return agmt.Facts[i].ShortName > agmt.Facts[j].ShortName
 	})
+}
+
+// ContainsShortName iterates through the facts of
+// the received argument and returns true if any of
+// the facts contain the short name provided, false
+// otherwise.
+func (agmt Argument) ContainsShortName(b byte) bool {
+	for _, f := range agmt.Facts {
+		if f.ShortName == b {
+			return true
+		}
+	}
+	return false
 }
 
 // NumPositional returns the number of positional
@@ -112,42 +118,4 @@ func (agmt Argument) FlagFacts() []*Fact {
 		}
 	}
 	return facts
-}
-
-// PrintUsage writes the usage information of the
-// recieved argument to the standard output.
-func (agmt Argument) PrintUsage() {
-	agmt.PrintVersion()
-	fmt.Println(agmt.Description)
-	fmt.Println()
-	fmt.Printf("Usage: %v", getBinaryName())
-	for _, f := range agmt.Facts {
-		fmt.Printf(" [--%v]", f.FullName)
-	}
-	fmt.Println()
-
-	// Only show positional arguments if they exist
-	if agmt.NumPositional() > 0 {
-		fmt.Println()
-		fmt.Println("Positional arguments:")
-		for _, f := range agmt.PositionalFacts() {
-			fmt.Printf("  %s\n", f.InfoString())
-		}
-	}
-
-	// Only show optional arguments if they exist
-	if agmt.NumFlags() > 0 {
-		fmt.Println()
-		fmt.Println("Flags:")
-		for _, f := range agmt.FlagFacts() {
-			fmt.Printf("  %s\n", f.InfoString())
-		}
-	}
-}
-
-// PrintVersion writes the version of the program
-// to the standard output in the form of "<name>
-// <version>"
-func (agmt Argument) PrintVersion() {
-	fmt.Printf("%v %v\n", getBinaryName(), agmt.Version)
 }
