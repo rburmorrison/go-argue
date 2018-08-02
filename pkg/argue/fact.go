@@ -38,7 +38,7 @@ func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool) Fact {
 	fact.Help = h
 	fact.FullName = replacer.Replace(strings.ToLower(fn))
 	fact.ShortName = sn
-	fact.Positional = false
+	fact.SetPositional(p)
 	fact.Required = false
 	return fact
 }
@@ -53,4 +53,21 @@ func (f *Fact) SetHelp(h string) {
 // property of the received fact to that byte.
 func (f *Fact) SetShortName(b byte) {
 	f.ShortName = b
+}
+
+// SetPositional accepts a bool and sets the
+// Positional property of the received fact to that
+// bool.
+func (f *Fact) SetPositional(p bool) {
+	if p && f.Type == FactTypeBool {
+		panic("argue: a fact of type bool can not be positional")
+	}
+
+	f.Positional = p
+}
+
+// SetRequired accepts a bool and sets the Required
+// property of the received fact to that bool.
+func (f *Fact) SetRequired(r bool) {
+	f.Required = r
 }

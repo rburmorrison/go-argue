@@ -6,13 +6,20 @@ import (
 )
 
 func printFact(s int, f Fact) {
-	p1 := fmt.Sprintf("  -%s, --%s", string(f.ShortName), f.FullName)
-	if f.ShortName == 0 {
-		p1 = fmt.Sprintf("  --%s", f.FullName)
-	}
+	var p1 string
+	if !f.Positional {
+		p1 = fmt.Sprintf("  -%s, --%s", string(f.ShortName), f.FullName)
+		if f.ShortName == 0 {
+			p1 = fmt.Sprintf("  --%s", f.FullName)
+		}
 
-	if f.Type != FactTypeBool {
-		p1 += " VALUE"
+		if f.Type != FactTypeBool {
+			p1 += " VALUE"
+		}
+	} else {
+		replacer := strings.NewReplacer(" ", "", "-", "")
+		name := replacer.Replace(f.FullName)
+		p1 = fmt.Sprintf("  %s", strings.ToUpper(name))
 	}
 
 	p1 += strings.Repeat(" ", s-len(p1))
@@ -42,12 +49,18 @@ func (agmt Argument) PrintUsage() {
 	}
 
 	fmt.Printf("Usage: %v", getBinaryName())
-	for _, f := range agmt.Facts {
+	for _, f := range agmt.FlagFacts() {
 		if f.Type == FactTypeBool {
 			fmt.Printf(" [--%v]", f.FullName)
 		} else {
 			fmt.Printf(" [--%v VALUE]", f.FullName)
 		}
+	}
+
+	for _, f := range agmt.PositionalFacts() {
+		replacer := strings.NewReplacer(" ", "", "-", "")
+		name := replacer.Replace(f.FullName)
+		fmt.Printf(" %s", strings.ToUpper(name))
 	}
 	fmt.Println()
 
