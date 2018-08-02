@@ -10,7 +10,12 @@ func printFact(s int, f Fact) {
 	if f.ShortName == 0 {
 		p1 = fmt.Sprintf("  --%s", f.FullName)
 	}
-	p1 += strings.Repeat(" ", s-len(p1)-1)
+
+	if f.Type != FactTypeBool {
+		p1 += " VALUE"
+	}
+
+	p1 += strings.Repeat(" ", s-len(p1))
 	p1 += f.Help
 	fmt.Println(p1)
 }
@@ -18,7 +23,15 @@ func printFact(s int, f Fact) {
 // PrintUsage writes the usage information of the
 // recieved argument to the standard output.
 func (agmt Argument) PrintUsage() {
-	width := 25
+	agmt.SortFacts()
+	width := 0
+	for _, f := range agmt.Facts {
+		s := fmt.Sprintf("  -%s, --%s VALUE", string(f.ShortName), f.FullName)
+		if len(s) > width {
+			width = len(s) + 5
+		}
+	}
+
 	if agmt.ShowVersion {
 		agmt.PrintVersion()
 	}
@@ -30,7 +43,11 @@ func (agmt Argument) PrintUsage() {
 
 	fmt.Printf("Usage: %v", getBinaryName())
 	for _, f := range agmt.Facts {
-		fmt.Printf(" [--%v]", f.FullName)
+		if f.Type == FactTypeBool {
+			fmt.Printf(" [--%v]", f.FullName)
+		} else {
+			fmt.Printf(" [--%v VALUE]", f.FullName)
+		}
 	}
 	fmt.Println()
 
@@ -50,7 +67,7 @@ func (agmt Argument) PrintUsage() {
 		printFact(width, *f)
 	}
 	printFact(width, NewFact(FactTypeBool, "display this help and exit", "help", byte("h"[0]), false, false))
-	printFact(width, NewFact(FactTypeBool, "display version and exit", "version", 0, false, false))
+	printFact(width, NewFact(FactTypeBool, "display version and exit", "version", byte("v"[0]), false, false))
 }
 
 // PrintVersion writes the version of the program
