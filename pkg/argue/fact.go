@@ -6,10 +6,10 @@ type FactType int
 
 // FactType Values
 const (
-	FactTypeInt = iota
-	FactTypeFloat
+	FactTypeBool = iota
 	FactTypeString
-	FactTypeBool
+	FactTypeInt
+	FactTypeFloat
 )
 
 // Fact represents a rule that an argument must
