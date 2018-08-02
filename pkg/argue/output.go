@@ -1,10 +1,24 @@
 package argue
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+
+func printFact(s int, f Fact) {
+	p1 := fmt.Sprintf("  -%s, --%s", string(f.ShortName), f.FullName)
+	if f.ShortName == 0 {
+		p1 = fmt.Sprintf("  --%s", f.FullName)
+	}
+	p1 += strings.Repeat(" ", s-len(p1)-1)
+	p1 += f.Help
+	fmt.Println(p1)
+}
 
 // PrintUsage writes the usage information of the
 // recieved argument to the standard output.
 func (agmt Argument) PrintUsage() {
+	width := 30
 	if agmt.ShowVersion {
 		agmt.PrintVersion()
 	}
@@ -25,18 +39,18 @@ func (agmt Argument) PrintUsage() {
 		fmt.Println()
 		fmt.Println("Positional arguments:")
 		for _, f := range agmt.PositionalFacts() {
-			fmt.Printf("  %s\n", f.InfoString())
+			printFact(width, *f)
 		}
 	}
 
 	// Only show optional arguments if they exist
-	if agmt.NumFlags() > 0 {
-		fmt.Println()
-		fmt.Println("Flags:")
-		for _, f := range agmt.FlagFacts() {
-			fmt.Printf("  %s\n", f.InfoString())
-		}
+	fmt.Println()
+	fmt.Println("Flags:")
+	for _, f := range agmt.FlagFacts() {
+		printFact(width, *f)
 	}
+	// fmt.Println("  -h, --help\tdisplay this help and exit")
+	// fmt.Println("  --version\tdisplay version and exit")
 }
 
 // PrintVersion writes the version of the program

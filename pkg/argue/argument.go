@@ -25,7 +25,6 @@ func NewArgument(desc string, version string) Argument {
 	agmt.Version = version
 	agmt.ShowDesc = true
 	agmt.ShowVersion = true
-
 	return agmt
 }
 
@@ -33,7 +32,10 @@ func NewArgument(desc string, version string) Argument {
 // description or version, and sets ShowDesc and
 // ShowVersion to false.
 func NewEmptyArgument() Argument {
-	return Argument{}
+	agmt := NewArgument("", "")
+	agmt.ShowDesc = false
+	agmt.ShowVersion = false
+	return agmt
 }
 
 // AddFact adds a new fact to the argument with the
@@ -55,7 +57,7 @@ func (agmt Argument) Propose(ms bool) bool {
 // type.
 func (agmt *Argument) SortFacts() {
 	sort.Slice(agmt.Facts, func(i, j int) bool {
-		return agmt.Facts[i].ShortName > agmt.Facts[j].ShortName
+		return agmt.Facts[i].ShortName < agmt.Facts[j].ShortName
 	})
 }
 

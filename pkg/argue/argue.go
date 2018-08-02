@@ -13,7 +13,7 @@ func getBinaryName() string {
 
 func determineShortName(a Argument, n string) byte {
 	sn := string(n[0])
-	if a.ContainsShortName(byte(sn[0])) {
+	if a.ContainsShortName(byte(sn[0])) || sn == "h" {
 		sn = strings.ToUpper(sn)
 	}
 

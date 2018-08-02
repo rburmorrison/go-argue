@@ -1,7 +1,6 @@
 package argue
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -32,29 +31,16 @@ type Fact struct {
 // NewFact returns a new fact with the given
 // parameters.
 func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool) Fact {
+	replacer := strings.NewReplacer(" ", "-")
+
 	var fact Fact
 	fact.Type = t
 	fact.Help = h
-	fact.FullName = strings.ToLower(fn)
+	fact.FullName = replacer.Replace(strings.ToLower(fn))
 	fact.ShortName = sn
 	fact.Positional = false
 	fact.Required = false
 	return fact
-}
-
-// InfoString returns a string containing the
-// information that will be printed out with the
-// usage information.
-func (f Fact) InfoString() string {
-	if !f.Positional {
-		if f.ShortName == 0 {
-			return fmt.Sprintf("--%s\t\t%v", f.FullName, f.Help)
-		}
-
-		return fmt.Sprintf("-%s, --%s \t%v", string(f.ShortName), f.FullName, f.Help)
-	}
-
-	return ""
 }
 
 // SetHelp accepts a string and sets the Help
