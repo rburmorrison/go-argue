@@ -12,17 +12,29 @@ type Argument struct {
 	Description string
 	Version     string
 	Facts       []*Fact
+	ShowDesc    bool
+	ShowVersion bool
 }
 
 // NewArgument accepts a description and will return
 // a new Argument with that description and default
-// values.
+// values. NewArgument also sets ShowDesc and
+// ShowVersion to true.
 func NewArgument(desc string, version string) Argument {
 	var agmt Argument
 	agmt.Description = desc
 	agmt.Version = version
+	agmt.ShowDesc = true
+	agmt.ShowVersion = true
 
 	return agmt
+}
+
+// NewEmptyArgument returns a new argument without a
+// description or version, and sets ShowDesc and
+// ShowVersion to false.
+func NewEmptyArgument() Argument {
+	return Argument{}
 }
 
 // AddBool adds a new bool fact to the argument with
@@ -66,9 +78,21 @@ func (agmt Argument) NumPositional() int {
 	return count
 }
 
-// NumOptions returns the number of optional facts
+// PositionalFacts returns a slice of all the
+// positional facts in the received argument.
+func (agmt Argument) PositionalFacts() []*Fact {
+	var facts []*Fact
+	for _, f := range agmt.Facts {
+		if f.Positional {
+			facts = append(facts, f)
+		}
+	}
+	return facts
+}
+
+// NumFlags returns the number of optional facts
 // within the received argument.
-func (agmt Argument) NumOptions() int {
+func (agmt Argument) NumFlags() int {
 	var count int
 	for _, f := range agmt.Facts {
 		if !f.Positional {
@@ -78,10 +102,24 @@ func (agmt Argument) NumOptions() int {
 	return count
 }
 
+// FlagFacts returns a slice of all the facts that
+// are a flag in the received argument.
+func (agmt Argument) FlagFacts() []*Fact {
+	var facts []*Fact
+	for _, f := range agmt.Facts {
+		if !f.Positional {
+			facts = append(facts, f)
+		}
+	}
+	return facts
+}
+
 // PrintUsage writes the usage information of the
 // recieved argument to the standard output.
 func (agmt Argument) PrintUsage() {
 	agmt.PrintVersion()
+	fmt.Println(agmt.Description)
+	fmt.Println()
 	fmt.Printf("Usage: %v", getBinaryName())
 	for _, f := range agmt.Facts {
 		fmt.Printf(" [--%v]", f.FullName)
@@ -92,12 +130,18 @@ func (agmt Argument) PrintUsage() {
 	if agmt.NumPositional() > 0 {
 		fmt.Println()
 		fmt.Println("Positional arguments:")
+		for _, f := range agmt.PositionalFacts() {
+			fmt.Printf("  %s\n", f.InfoString())
+		}
 	}
 
 	// Only show optional arguments if they exist
-	if agmt.NumOptions() > 0 {
+	if agmt.NumFlags() > 0 {
 		fmt.Println()
 		fmt.Println("Flags:")
+		for _, f := range agmt.FlagFacts() {
+			fmt.Printf("  %s\n", f.InfoString())
+		}
 	}
 }
 
