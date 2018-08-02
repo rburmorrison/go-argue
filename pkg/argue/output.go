@@ -18,7 +18,7 @@ func printFact(s int, f Fact) {
 // PrintUsage writes the usage information of the
 // recieved argument to the standard output.
 func (agmt Argument) PrintUsage() {
-	width := 30
+	width := 25
 	if agmt.ShowVersion {
 		agmt.PrintVersion()
 	}
@@ -49,8 +49,8 @@ func (agmt Argument) PrintUsage() {
 	for _, f := range agmt.FlagFacts() {
 		printFact(width, *f)
 	}
-	// fmt.Println("  -h, --help\tdisplay this help and exit")
-	// fmt.Println("  --version\tdisplay version and exit")
+	printFact(width, NewFact(FactTypeBool, "display this help and exit", "help", byte("h"[0]), false, false))
+	printFact(width, NewFact(FactTypeBool, "display version and exit", "version", 0, false, false))
 }
 
 // PrintVersion writes the version of the program
