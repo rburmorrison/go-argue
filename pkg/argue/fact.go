@@ -51,6 +51,7 @@ func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interfa
 	fact.ShortName = sn
 	fact.SetPositional(p)
 	fact.Required = false
+	fact.Value = v
 	return fact
 }
 

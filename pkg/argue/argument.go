@@ -1,6 +1,7 @@
 package argue
 
 import (
+	"reflect"
 	"sort"
 )
 
@@ -47,12 +48,30 @@ func (agmt *Argument) AddFact(ft FactType, name string, help string, v interface
 	return &fact
 }
 
-// NameInFacts accepts a name and checks if that name
-// exists within the existing facts of the received
-// argument. This checks both the short and long
-// names.
-func (agmt Argument) NameInFacts(name string) bool {
+// NameInFlagFacts accepts a name and checks if that
+// name exists within the existing facts of the
+// received argument. This checks both the short and
+// long names.
+func (agmt Argument) NameInFlagFacts(name string) (*Fact, bool) {
+	for _, f := range agmt.FlagFacts() {
+		if name == f.FullName || name == string(f.ShortName) {
+			return f, true
+		}
+	}
+	return &Fact{}, false
+}
 
+// NameInPositonalFacts accepts a name and checks if
+// that name exists within the existing facts of the
+// received argument. This checks both the short and
+// long names.
+func (agmt Argument) NameInPositonalFacts(name string) (*Fact, bool) {
+	for _, f := range agmt.PositionalFacts() {
+		if name == f.FullName || name == string(f.ShortName) {
+			return f, true
+		}
+	}
+	return &Fact{}, false
 }
 
 // Propose will parse the command line arguments and
@@ -64,7 +83,22 @@ func (agmt Argument) NameInFacts(name string) bool {
 // written to the standard output and the program
 // will exit with error code 1.
 func (agmt Argument) Propose(ms bool) bool {
-	splitArguments(agmt)
+	_, fm := splitArguments(agmt)
+	for k, v := range fm {
+		f, _ := agmt.NameInFlagFacts(k)
+		val := reflect.ValueOf(f.Value).Elem()
+		switch f.Type {
+		case FactTypeBool:
+			val.SetBool(v.(bool))
+		case FactTypeString:
+			val.SetString(v.(string))
+		case FactTypeInt:
+			val.SetInt(v.(int64))
+		case FactTypeFloat:
+			val.SetFloat(v.(float64))
+		}
+	}
+
 	return true
 }
 
