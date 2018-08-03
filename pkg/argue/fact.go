@@ -2,6 +2,7 @@ package argue
 
 import (
 	"reflect"
+	"regexp"
 	"strings"
 )
 
@@ -39,11 +40,14 @@ func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interfa
 	}
 
 	replacer := strings.NewReplacer(" ", "-")
+	fn = replacer.Replace(strings.ToLower(fn))
+	reg := regexp.MustCompile("--+")
+	fn = reg.ReplaceAllString(fn, "-")
 
 	var fact Fact
 	fact.Type = t
 	fact.Help = h
-	fact.FullName = replacer.Replace(strings.ToLower(fn))
+	fact.FullName = fn
 	fact.ShortName = sn
 	fact.SetPositional(p)
 	fact.Required = false

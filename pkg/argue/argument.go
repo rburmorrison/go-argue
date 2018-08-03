@@ -121,3 +121,15 @@ func (agmt Argument) FlagFacts() []*Fact {
 	}
 	return facts
 }
+
+// RequiredFacts returns a slice of all the facts
+// that are required in the received argument.
+func (agmt Argument) RequiredFacts() []*Fact {
+	var facts []*Fact
+	for _, f := range agmt.Facts {
+		if f.Required {
+			facts = append(facts, f)
+		}
+	}
+	return facts
+}
