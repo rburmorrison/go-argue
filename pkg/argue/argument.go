@@ -1,7 +1,6 @@
 package argue
 
 import (
-	"reflect"
 	"sort"
 )
 
@@ -86,33 +85,7 @@ func (agmt Argument) Propose(ms bool) bool {
 	_, fm := splitArguments(agmt)
 	for k, v := range fm {
 		f, _ := agmt.NameInFlagFacts(k)
-		val := reflect.ValueOf(f.Value).Elem()
-		switch f.Type {
-		case FactTypeBool:
-			b, ok := v.(bool)
-			if !ok {
-				panic("argue: invalid type passed to bool flag")
-			}
-			val.SetBool(b)
-		case FactTypeString:
-			s, ok := v.(string)
-			if !ok {
-				panic("argue: invalid type passed to string flag")
-			}
-			val.SetString(s)
-		case FactTypeInt:
-			i, ok := v.(int64)
-			if !ok {
-				panic("argue: invalid type passed to int flag")
-			}
-			val.SetInt(i)
-		case FactTypeFloat:
-			f, ok := v.(float64)
-			if !ok {
-				panic("argue: invalid type passed to int flag")
-			}
-			val.SetFloat(f)
-		}
+		setFactValue(f, v)
 	}
 
 	return true

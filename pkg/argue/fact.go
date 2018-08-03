@@ -1,6 +1,7 @@
 package argue
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -36,7 +37,18 @@ type Fact struct {
 func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interface{}) Fact {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() != reflect.Ptr {
-		panic("argue: variables passed to a fact must be pointers")
+		panic("argue: variables passed to a Fact must be pointers")
+	}
+
+	ty := fmt.Sprintf("%v", reflect.TypeOf(v))
+	if t == FactTypeBool && ty != "*bool" {
+		panic("argue: FactType is bool, but variable received is " + ty)
+	} else if t == FactTypeFloat && ty != "*float64" {
+		panic("argue: FactType is float, but variable received is " + ty)
+	} else if t == FactTypeInt && ty != "*int" {
+		panic("argue: FactType is int, but variable received is " + ty)
+	} else if t == FactTypeString && ty != "*string" {
+		panic("argue: FactType is string, but variable received is " + ty)
 	}
 
 	replacer := strings.NewReplacer(" ", "-")
