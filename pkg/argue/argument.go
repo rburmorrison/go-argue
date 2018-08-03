@@ -41,15 +41,30 @@ func NewEmptyArgument() Argument {
 // AddFact adds a new fact to the argument with the
 // given parameters.
 func (agmt *Argument) AddFact(ft FactType, name string, help string, v interface{}) *Fact {
-	boolFact := NewFact(ft, help, name, determineShortName(*agmt, name), false, false, v)
-	agmt.Facts = append(agmt.Facts, &boolFact)
+	fact := NewFact(ft, help, name, determineShortName(*agmt, name), false, false, v)
+	agmt.Facts = append(agmt.Facts, &fact)
 	agmt.SortFacts()
-	return &boolFact
+	return &fact
 }
 
-// Propose accepts a boolean that determines if the
-// proposed argument must succeed or not.
+// NameInFacts accepts a name and checks if that name
+// exists within the existing facts of the received
+// argument. This checks both the short and long
+// names.
+func (agmt Argument) NameInFacts(name string) bool {
+
+}
+
+// Propose will parse the command line arguments and
+// determine if they align with the facts in the
+// received Argument type. The values of facts will
+// be populated accordingly. Propose accepts a
+// boolean that determines if the proposed argument
+// must succeed or not. If set, the usage will be
+// written to the standard output and the program
+// will exit with error code 1.
 func (agmt Argument) Propose(ms bool) bool {
+	splitArguments(agmt)
 	return true
 }
 
