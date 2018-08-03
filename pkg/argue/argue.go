@@ -51,7 +51,7 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 				var val interface{}
 				if f.Type != FactTypeBool {
 					if len(args)-1 <= i {
-						panic("argue: no value supplied to non-bool flag")
+						panic("argue: no value supplied to --" + f.FullName)
 					} else {
 						val = args[i+1]
 					}

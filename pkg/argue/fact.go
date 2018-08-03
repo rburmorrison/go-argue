@@ -40,7 +40,7 @@ func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interfa
 		panic("argue: variables passed to a Fact must be pointers")
 	}
 
-	ty := fmt.Sprintf("%v", reflect.TypeOf(v))
+	ty := fmt.Sprintf("%s", reflect.TypeOf(v))
 	if t == FactTypeBool && ty != "*bool" {
 		panic("argue: FactType is bool, but variable received is " + ty)
 	} else if t == FactTypeFloat && ty != "*float64" {
