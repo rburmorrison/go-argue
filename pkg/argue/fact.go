@@ -1,6 +1,7 @@
 package argue
 
 import (
+	"reflect"
 	"strings"
 )
 
@@ -26,11 +27,17 @@ type Fact struct {
 	ShortName  byte
 	Positional bool
 	Required   bool
+	Value      interface{}
 }
 
 // NewFact returns a new fact with the given
 // parameters.
-func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool) Fact {
+func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interface{}) Fact {
+	rv := reflect.ValueOf(v)
+	if rv.Kind() != reflect.Ptr {
+		panic("argue: variables passed to a fact must be pointers")
+	}
+
 	replacer := strings.NewReplacer(" ", "-")
 
 	var fact Fact
