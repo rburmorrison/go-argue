@@ -89,13 +89,29 @@ func (agmt Argument) Propose(ms bool) bool {
 		val := reflect.ValueOf(f.Value).Elem()
 		switch f.Type {
 		case FactTypeBool:
-			val.SetBool(v.(bool))
+			b, ok := v.(bool)
+			if !ok {
+				panic("argue: invalid type passed to bool flag")
+			}
+			val.SetBool(b)
 		case FactTypeString:
-			val.SetString(v.(string))
+			s, ok := v.(string)
+			if !ok {
+				panic("argue: invalid type passed to string flag")
+			}
+			val.SetString(s)
 		case FactTypeInt:
-			val.SetInt(v.(int64))
+			i, ok := v.(int64)
+			if !ok {
+				panic("argue: invalid type passed to int flag")
+			}
+			val.SetInt(i)
 		case FactTypeFloat:
-			val.SetFloat(v.(float64))
+			f, ok := v.(float64)
+			if !ok {
+				panic("argue: invalid type passed to int flag")
+			}
+			val.SetFloat(f)
 		}
 	}
 
