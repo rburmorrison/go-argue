@@ -2,6 +2,7 @@ package argue
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -27,11 +28,32 @@ func printFact(s int, f Fact) {
 	fmt.Println(p1)
 }
 
+// PrintError accepts a message and will print it
+// as an error message along with the received
+// argument's usage line. This will exit the program
+// with an error code of 1.
+func (agmt Argument) PrintError(msg string) {
+	fmt.Printf("Error: %v\n", msg)
+
+	// Print usage line
+	fmt.Printf("Usage: %v", getBinaryName())
+	for _, f := range agmt.FlagFacts() {
+		if f.Type == FactTypeBool {
+			fmt.Printf(" [--%v]", f.FullName)
+		} else {
+			fmt.Printf(" [--%v VALUE]", f.FullName)
+		}
+	}
+	fmt.Println()
+
+	os.Exit(1)
+}
+
 // PrintUsage writes the usage information of the
 // recieved argument to the standard output.
 func (agmt Argument) PrintUsage() {
-	agmt.SortFacts()
 	width := 0
+	agmt.SortFacts()
 	for _, f := range agmt.Facts {
 		s := fmt.Sprintf("  -%s, --%s VALUE", string(f.ShortName), f.FullName)
 		if len(s) > width {

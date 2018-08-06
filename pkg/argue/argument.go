@@ -99,13 +99,13 @@ func (agmt Argument) Propose(ms bool) bool {
 		}
 
 		if !contains {
-			panic("argue: required argument --" + f.FullName + " is missing")
+			agmt.PrintError("required argument --" + f.FullName + " is missing")
 		}
 	}
 
 	for k, v := range fm {
 		f, _ := agmt.NameInFlagFacts(k)
-		setFactValue(f, v)
+		setFactValue(agmt, f, v)
 	}
 
 	return true

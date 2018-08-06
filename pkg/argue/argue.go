@@ -50,7 +50,7 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 				var val interface{}
 				if f.Type != FactTypeBool {
 					if len(args)-1 <= i {
-						panic("argue: no value supplied to --" + f.FullName)
+						agmt.PrintError("no value supplied to --" + f.FullName)
 					} else {
 						val = args[i+1]
 					}
@@ -67,34 +67,34 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 	return positionalMap, flagMap
 }
 
-func setFactValue(f *Fact, v interface{}) {
+func setFactValue(agmt Argument, f *Fact, v interface{}) {
 	val := reflect.ValueOf(f.Value).Elem()
 	switch f.Type {
 	case FactTypeBool:
 		b, ok := v.(bool)
 		if !ok {
-			panic("argue: invalid type passed to bool flag")
+			agmt.PrintError("--" + f.FullName + " requires a boolean value")
 		}
 		val.SetBool(b)
 	case FactTypeString:
 		s, ok := v.(string)
 		if !ok {
-			panic("argue: invalid type passed to string flag")
+			agmt.PrintError("--" + f.FullName + " requires a string value")
 		}
 		val.SetString(s)
 	case FactTypeInt:
 		s := v.(string)
 		i, err := strconv.Atoi(s)
 		if err != nil {
-			panic("argue: invalid type passed to int flag")
+			agmt.PrintError("--" + f.FullName + " requires an integer value")
 		}
 		val.SetInt(int64(i))
 	case FactTypeFloat:
 		s := v.(string)
-		f, err := strconv.ParseFloat(s, 64)
+		fl, err := strconv.ParseFloat(s, 64)
 		if err != nil {
-			panic("argue: invalid type passed to float flag")
+			agmt.PrintError("--" + f.FullName + " requires a float value")
 		}
-		val.SetFloat(f)
+		val.SetFloat(fl)
 	}
 }
