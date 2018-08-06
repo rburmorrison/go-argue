@@ -46,7 +46,6 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 				name = a[2:]
 			}
 
-			// TODO: adjust to only look at flag facts
 			if f, ok := agmt.NameInFlagFacts(name); ok {
 				var val interface{}
 				if f.Type != FactTypeBool {

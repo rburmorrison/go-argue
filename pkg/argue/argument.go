@@ -82,7 +82,27 @@ func (agmt Argument) NameInPositonalFacts(name string) (*Fact, bool) {
 // written to the standard output and the program
 // will exit with error code 1.
 func (agmt Argument) Propose(ms bool) bool {
-	_, fm := splitArguments(agmt)
+	pm, fm := splitArguments(agmt)
+
+	// Combine maps into one big map
+	allM := pm
+	for k, v := range fm {
+		allM[k] = v
+	}
+
+	for _, f := range agmt.RequiredFacts() {
+		var contains bool
+		for k := range allM {
+			if k == f.FullName || byte(k[0]) == f.ShortName {
+				contains = true
+			}
+		}
+
+		if !contains {
+			panic("argue: required argument --" + f.FullName + " is missing")
+		}
+	}
+
 	for k, v := range fm {
 		f, _ := agmt.NameInFlagFacts(k)
 		setFactValue(f, v)
