@@ -34,18 +34,7 @@ func printFact(s int, f Fact) {
 // with an error code of 1.
 func (agmt Argument) PrintError(msg string) {
 	fmt.Printf("Error: %v\n", msg)
-
-	// Print usage line
-	fmt.Printf("Usage: %v", getBinaryName())
-	for _, f := range agmt.FlagFacts() {
-		if f.Type == FactTypeBool {
-			fmt.Printf(" [--%v]", f.FullName)
-		} else {
-			fmt.Printf(" [--%v VALUE]", f.FullName)
-		}
-	}
-	fmt.Println()
-
+	fmt.Printf("Run \"%v --help\" to see usage\n", getBinaryName())
 	os.Exit(1)
 }
 

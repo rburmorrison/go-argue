@@ -4,6 +4,7 @@ package argue
 
 import (
 	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 )
 
 func getBinaryName() string {
-	return os.Args[0][2:]
+	return filepath.Base(os.Args[0])
 }
 
 func determineShortName(a Argument, n string) byte {
@@ -40,10 +41,26 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 
 	args := os.Args[1:]
 	for i, a := range args {
+		sn := a[1:]
+		ln := a[2:]
+
+		// Handle default help flag
+		if sn == "h" || ln == "help" {
+			agmt.PrintUsage()
+			os.Exit(0)
+		}
+
+		// Handle version flag if implemented
+		if agmt.ShowVersion && sn == "v" || ln == "version" {
+			agmt.PrintVersion()
+			os.Exit(0)
+		}
+
+		// Handle flags
 		if flagRegex.MatchString(a) {
-			name := a[1:]
+			name := sn
 			if strings.HasPrefix(a, "--") {
-				name = a[2:]
+				name = ln
 			}
 
 			if f, ok := agmt.NameInFlagFacts(name); ok {
