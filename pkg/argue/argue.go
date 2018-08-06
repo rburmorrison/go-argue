@@ -63,6 +63,10 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 				name = ln
 			}
 
+			if _, ok := agmt.NameInFlagFacts(name); !ok {
+				agmt.PrintError("unknown flag " + a + " provided")
+			}
+
 			if f, ok := agmt.NameInFlagFacts(name); ok {
 				var val interface{}
 				if f.Type != FactTypeBool {
