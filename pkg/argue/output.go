@@ -90,8 +90,11 @@ func (agmt Argument) PrintUsage() {
 
 	// Print default fact information
 	var emptyI bool
-	printFact(width, NewFact(FactTypeBool, "display this help and exit", "help", byte("h"[0]), false, false, &emptyI))
-	printFact(width, NewFact(FactTypeBool, "display version and exit", "version", byte("v"[0]), false, false, &emptyI))
+	printFact(width, NewFact("display this help and exit", "help", byte("h"[0]), false, false, &emptyI))
+
+	if agmt.ShowVersion {
+		printFact(width, NewFact("display version and exit", "version", byte("v"[0]), false, false, &emptyI))
+	}
 }
 
 // PrintVersion writes the version of the program

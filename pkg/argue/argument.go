@@ -40,8 +40,8 @@ func NewEmptyArgument() Argument {
 
 // AddFact adds a new fact to the argument with the
 // given parameters.
-func (agmt *Argument) AddFact(ft FactType, name string, help string, v interface{}) *Fact {
-	fact := NewFact(ft, help, name, determineShortName(*agmt, name), false, false, v)
+func (agmt *Argument) AddFact(name string, help string, v interface{}) *Fact {
+	fact := NewFact(help, name, determineShortName(*agmt, name, agmt.ShowVersion), false, false, v)
 	agmt.Facts = append(agmt.Facts, &fact)
 	agmt.SortFacts()
 	return &fact

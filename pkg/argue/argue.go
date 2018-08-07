@@ -15,9 +15,9 @@ func getBinaryName() string {
 	return filepath.Base(os.Args[0])
 }
 
-func determineShortName(a Argument, n string) byte {
+func determineShortName(a Argument, n string, sv bool) byte {
 	sn := string(n[0])
-	if a.ContainsShortName(byte(sn[0])) || sn == "h" || sn == "v" {
+	if a.ContainsShortName(byte(sn[0])) || sn == "h" || (sn == "v" && sv) {
 		sn = strings.ToUpper(sn)
 	}
 

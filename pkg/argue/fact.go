@@ -34,23 +34,28 @@ type Fact struct {
 
 // NewFact returns a new fact with the given
 // parameters.
-func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interface{}) Fact {
+func NewFact(h string, fn string, sn byte, p bool, r bool, v interface{}) Fact {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() != reflect.Ptr {
 		panic("argue: variables passed to a Fact must be pointers")
 	}
 
+	var t FactType
 	ty := fmt.Sprintf("%s", reflect.TypeOf(v))
-	if t == FactTypeBool && ty != "*bool" {
-		panic("argue: FactType is bool, but variable received is " + ty)
-	} else if t == FactTypeFloat && ty != "*float64" {
-		panic("argue: FactType is float, but variable received is " + ty)
-	} else if t == FactTypeInt && ty != "*int" {
-		panic("argue: FactType is int, but variable received is " + ty)
-	} else if t == FactTypeString && ty != "*string" {
-		panic("argue: FactType is string, but variable received is " + ty)
+	switch ty {
+	case "*bool":
+		t = FactTypeBool
+	case "*float64":
+		t = FactTypeFloat
+	case "*int":
+		t = FactTypeInt
+	case "*string":
+		t = FactTypeString
+	default:
+		panic("argue: invalid type passed to NewFact. Options are *bool, *float64, *int, and *string")
 	}
 
+	// Standardize the name
 	replacer := strings.NewReplacer(" ", "-")
 	fn = replacer.Replace(strings.ToLower(fn))
 	reg := regexp.MustCompile("--+")
