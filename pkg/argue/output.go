@@ -18,9 +18,7 @@ func printFact(s int, f Fact) {
 			p1 += " VALUE"
 		}
 	} else {
-		replacer := strings.NewReplacer(" ", "", "-", "")
-		name := replacer.Replace(f.FullName)
-		p1 = fmt.Sprintf("  %s", strings.ToUpper(name))
+		p1 = fmt.Sprintf("  %s", f.UpperName())
 	}
 
 	p1 += strings.Repeat(" ", s-len(p1))
@@ -70,9 +68,7 @@ func (agmt Argument) PrintUsage() {
 	}
 
 	for _, f := range agmt.PositionalFacts() {
-		replacer := strings.NewReplacer(" ", "", "-", "")
-		name := replacer.Replace(f.FullName)
-		fmt.Printf(" %s", strings.ToUpper(name))
+		fmt.Printf(" %s", f.UpperName())
 	}
 	fmt.Println()
 

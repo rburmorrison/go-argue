@@ -81,31 +81,55 @@ func (agmt Argument) NameInPositonalFacts(name string) (*Fact, bool) {
 // must succeed or not. If set, the usage will be
 // written to the standard output and the program
 // will exit with error code 1.
-func (agmt Argument) Propose(ms bool) bool {
-	pm, fm := splitArguments(agmt)
+func (agmt Argument) Propose() bool {
+	ps, fm := splitArguments(agmt)
 
-	// Combine maps into one big map
-	allM := pm
-	for k, v := range fm {
-		allM[k] = v
+	// Check if all required positional arguments are present
+	if agmt.NumRequiredPositional() > 0 {
+		pfs := agmt.PositionalFacts()
+		lowest := 0
+		var lastPositional *Fact
+		for i, pf := range pfs {
+			if pf.Required {
+				lastPositional = pf
+				lowest = i
+			}
+		}
+
+		if len(ps) <= lowest {
+			agmt.PrintError("positional argument " + lastPositional.UpperName() + " is missing")
+		}
 	}
 
+	// Check if all required flags are present.
 	for _, f := range agmt.RequiredFacts() {
+		if f.Positional {
+			continue
+		}
+
 		var contains bool
-		for k := range allM {
+		for k := range fm {
 			if k == f.FullName || byte(k[0]) == f.ShortName {
 				contains = true
 			}
 		}
 
 		if !contains {
-			agmt.PrintError("required argument --" + f.FullName + " is missing")
+			agmt.PrintError("required flag --" + f.FullName + " is missing")
 		}
 	}
 
 	for k, v := range fm {
 		f, _ := agmt.NameInFlagFacts(k)
 		setFactValue(agmt, f, v)
+	}
+
+	counter := 0
+	for _, v := range ps {
+		facts := agmt.PositionalFacts()
+		f := facts[counter]
+		setFactValue(agmt, f, v)
+		counter++
 	}
 
 	return true
@@ -180,12 +204,50 @@ func (agmt Argument) FlagFacts() []*Fact {
 	return facts
 }
 
+// NumRequired returns the number of required facts
+// within the received argument.
+func (agmt Argument) NumRequired() int {
+	var count int
+	for _, f := range agmt.Facts {
+		if f.Required {
+			count++
+		}
+	}
+	return count
+}
+
+// NumRequiredPositional returns the number of
+// positional facts that are also required within
+// the received argument.
+func (agmt Argument) NumRequiredPositional() int {
+	var count int
+	for _, f := range agmt.Facts {
+		if f.Required && f.Positional {
+			count++
+		}
+	}
+	return count
+}
+
 // RequiredFacts returns a slice of all the facts
 // that are required in the received argument.
 func (agmt Argument) RequiredFacts() []*Fact {
 	var facts []*Fact
 	for _, f := range agmt.Facts {
 		if f.Required {
+			facts = append(facts, f)
+		}
+	}
+	return facts
+}
+
+// RequiredPositionalFacts returns a slice of all the
+// facts that are required and positional in the
+// received argument.
+func (agmt Argument) RequiredPositionalFacts() []*Fact {
+	var facts []*Fact
+	for _, f := range agmt.Facts {
+		if f.Required && f.Positional {
 			facts = append(facts, f)
 		}
 	}

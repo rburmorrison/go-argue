@@ -69,29 +69,41 @@ func NewFact(t FactType, h string, fn string, sn byte, p bool, r bool, v interfa
 
 // SetHelp accepts a string and sets the Help
 // property of the received fact to that string.
-func (f *Fact) SetHelp(h string) {
+func (f *Fact) SetHelp(h string) *Fact {
 	f.Help = h
+	return f
 }
 
 // SetShortName accepts a byte and sets the ShortName
 // property of the received fact to that byte.
-func (f *Fact) SetShortName(b byte) {
+func (f *Fact) SetShortName(b byte) *Fact {
 	f.ShortName = b
+	return f
 }
 
 // SetPositional accepts a bool and sets the
 // Positional property of the received fact to that
 // bool.
-func (f *Fact) SetPositional(p bool) {
+func (f *Fact) SetPositional(p bool) *Fact {
 	if p && f.Type == FactTypeBool {
 		panic("argue: a fact of type bool can not be positional")
 	}
 
 	f.Positional = p
+	return f
 }
 
 // SetRequired accepts a bool and sets the Required
 // property of the received fact to that bool.
-func (f *Fact) SetRequired(r bool) {
+func (f *Fact) SetRequired(r bool) *Fact {
 	f.Required = r
+	return f
+}
+
+// UpperName returns the upper case full name that is
+// typically used with positional argument names.
+func (f *Fact) UpperName() string {
+	replacer := strings.NewReplacer(" ", "", "-", "")
+	name := replacer.Replace(f.FullName)
+	return strings.ToUpper(name)
 }

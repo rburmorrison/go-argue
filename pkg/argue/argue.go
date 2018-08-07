@@ -31,14 +31,15 @@ func determineShortName(a Argument, n string) byte {
 // splitArguments splits command-line arguments into
 // their "positional" and "flag" categories. They are
 // returned in that order.
-func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface{}) {
+func splitArguments(agmt Argument) ([]string, map[string]interface{}) {
 	// Regex expressions
 	flagRegex := regexp.MustCompile(`^(-\S|--\S+)$`)
 
 	// Maps
-	positionalMap := make(map[string]interface{})
+	var positionalMap []string
 	flagMap := make(map[string]interface{})
 
+	var excludedIndicies []int
 	args := os.Args[1:]
 	for i, a := range args {
 		sn := a[1:]
@@ -54,6 +55,13 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 		if agmt.ShowVersion && sn == "v" || ln == "version" {
 			agmt.PrintVersion()
 			os.Exit(0)
+		}
+
+		var ie bool
+		for _, v := range excludedIndicies {
+			if v == i {
+				ie = true
+			}
 		}
 
 		// Handle flags
@@ -74,12 +82,20 @@ func splitArguments(agmt Argument) (map[string]interface{}, map[string]interface
 						agmt.PrintError("no value supplied to --" + f.FullName)
 					} else {
 						val = args[i+1]
+
+						// Ignore this index for positional arguments
+						excludedIndicies = append(excludedIndicies, i+1)
 					}
 				} else {
 					val = true
 				}
 
 				flagMap[name] = val
+			}
+		} else if !ie {
+			positionalMap = append(positionalMap, a)
+			if len(positionalMap) > agmt.NumPositional() {
+				agmt.PrintError("too many positional arguments provided")
 			}
 		}
 	}
