@@ -52,6 +52,6 @@ If you come across any bugs while using argue, please submit an issue to this re
 - [x] Add support for flag arguments
 - [x] Add support for positional arguments
 - [ ] Add support for using quotes when supplying a string value
-- [ ] Make the propose function optionally return an error instead of always ending the program
+- [ ] Make the propose function optionally return an error instead of always ending the program upon failing
 - [ ] Add the ability to construct an argument from a struct
 - [ ] Add support for more varibles types (`float32`, `uint`, `int64`)
