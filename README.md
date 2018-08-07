@@ -33,6 +33,12 @@ func main() {
 
     // 3. Propose your argument
     agmt.Propose()
+
+    // Your variables are populated after Propose is run
+    fmt.Println("boolFlag1:", boolFlag1)
+    fmt.Println("intPositional1:", intPositional1)
+
+    // Run "yourexe --help" to see the usage information
 }
 ```
 
