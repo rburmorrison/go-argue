@@ -2,13 +2,15 @@
 
 A sassy Golang package for parsing command-line arguments.
 
+**Note:** This project is a work in progress. See the roadmap below for details.
+
 ## Installing
 
 Run `go get github.com/rburmorrison/go-argue/...`.
 
 ## Usage
 
-Creating a argument parser with argue takes three steps.
+Creating an argument parser with argue takes three steps.
 
 ```go
 package main
@@ -24,8 +26,8 @@ func main() {
 
     // 2. Supply facts (flags and positional arguments)
     //    to your argument
-    agmt.AddFact("flag", "this is an example flag that accepts a boolean", &boolFlag1)
-    agmt.AddFact("positional", "this is an example positional argument that accepts an int", &intPositional1).
+    agmt.AddFact("flag", "this is an example flag", &boolFlag1)
+    agmt.AddFact("positional", "this is an example positional argument", &intPositional1).
         SetPositional(true).
         SetRequired(true)
 
@@ -37,8 +39,13 @@ func main() {
 Notes:
 
 - Currently, only int, float64, string, and boolean values are accepted by argue
+- Currently, values passed to strings can not contain spaces, or they will be treated as separate items
 
 For more information such as adding descriptions to your argument, check out the `godoc` documentation.
+
+## Bugs
+
+If you come across any bugs while using argue, please submit an issue to this repo.
 
 ## Roadmap
 
@@ -47,4 +54,4 @@ For more information such as adding descriptions to your argument, check out the
 - [ ] Add support for using quotes when supplying a string value
 - [ ] Make the propose function optionally return an error instead of always ending the program
 - [ ] Add the ability to construct an argument from a struct
-- [ ] Add support for more varibles types (float32, uint)
+- [ ] Add support for more varibles types (`float32`, `uint`, `int64`)
