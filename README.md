@@ -6,7 +6,7 @@ A sassy Golang package for parsing command-line arguments.
 
 ## Installing
 
-Run `go get github.com/rburmorrison/go-argue/...`.
+Run `go get github.com/rburmorrison/go-argue`.
 
 ## Usage
 
@@ -15,7 +15,7 @@ Creating an argument parser with argue takes three steps.
 ```go
 package main
 
-import "github.com/rburmorrison/go-argue/pkg/argue"
+import "github.com/rburmorrison/go-argue"
 
 func main() {
     // 1. Make a new argument and variables to store the
