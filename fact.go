@@ -43,6 +43,18 @@ func NewFact(h string, n string, i byte, p bool, r bool, v interface{}) Fact {
 	return fact
 }
 
+// DressedName returns the standardized name of a
+// fact prefixed with two hyphens.
+func (f Fact) DressedName() string {
+	return "--" + StandardizeFactName(f.Name)
+}
+
+// DressedInitial returns the standardized initial of
+// a fact prefixed with one hyphen.
+func (f Fact) DressedInitial() string {
+	return "-" + string(f.Initial)
+}
+
 // SetHelp accepts a string and sets the Help
 // property of the received fact to that string.
 func (f *Fact) SetHelp(h string) *Fact {
