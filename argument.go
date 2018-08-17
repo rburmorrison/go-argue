@@ -1,6 +1,9 @@
 package argue
 
-import "strings"
+import (
+	"sort"
+	"strings"
+)
 
 // Argument represents the rules and information that
 // argue must follow when parsing command-line
@@ -37,6 +40,43 @@ func NewEmptyArgument() Argument {
 	return agmt
 }
 
+// AddFlagFact creates a new flag fact based on a
+// name, help description, and a reference to a
+// variable to place the parsed contents.
+func (a *Argument) AddFlagFact(name string, help string, v interface{}) *Fact {
+	name = StandardizeFactName(name)
+	if a.NameExists(name) {
+		panic("argument: name already exits within this argument")
+	}
+
+	fact := NewFact(help, name, a.GenerateInitial(name), false, false, v)
+	a.FlagFacts = append(a.FlagFacts, &fact)
+	a.SortFlagFacts()
+	return &fact
+}
+
+// AddPositionalFact creates a new positional fact
+// based on a name, help description, and a reference
+// to a variable to place the parsed contents.
+func (a *Argument) AddPositionalFact(name string, help string, v interface{}) *Fact {
+	name = StandardizeFactName(name)
+	if a.NameExists(name) {
+		panic("argument: name already exits within this argument")
+	}
+
+	fact := NewFact(help, name, a.GenerateInitial(name), true, false, v)
+	a.PositonalFacts = append(a.PositonalFacts, &fact)
+	return &fact
+}
+
+// SortFlagFacts sorts the flag facts in an argument
+// by fact type.
+func (a *Argument) SortFlagFacts() {
+	sort.Slice(a.FlagFacts, func(i, j int) bool {
+		return a.FlagFacts[i].Initial < a.FlagFacts[j].Initial
+	})
+}
+
 // NameExists returns true if any facts within the
 // argument has the name passed, false otherwise.
 func (a Argument) NameExists(n string) bool {
@@ -51,11 +91,11 @@ func (a Argument) NameExists(n string) bool {
 	return false
 }
 
-// InitialExists returns true if any facts within the
-// argument has the initial passed (excluding 0),
-// false otherwise.
+// InitialExists returns true if any flag facts
+// within the argument have the initial passed
+// (excluding 0), false otherwise.
 func (a Argument) InitialExists(i byte) bool {
-	fs := a.Facts()
+	fs := a.FlagFacts
 
 	for _, f := range fs {
 		if f.Initial == i {
