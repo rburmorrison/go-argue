@@ -9,12 +9,12 @@ import (
 // argue must follow when parsing command-line
 // arguments.
 type Argument struct {
-	Description    string
-	Version        string
-	PositonalFacts []*Fact
-	FlagFacts      []*Fact
-	ShowDesc       bool
-	ShowVersion    bool
+	Description     string
+	Version         string
+	PositionalFacts []*Fact
+	FlagFacts       []*Fact
+	ShowDesc        bool
+	ShowVersion     bool
 }
 
 // NewArgument accepts a description and will return
@@ -65,7 +65,7 @@ func (a *Argument) AddPositionalFact(name string, help string, v interface{}) *F
 	}
 
 	fact := NewFact(help, name, a.GenerateInitial(name), true, false, v)
-	a.PositonalFacts = append(a.PositonalFacts, &fact)
+	a.PositionalFacts = append(a.PositionalFacts, &fact)
 	return &fact
 }
 
@@ -130,5 +130,5 @@ func (a Argument) GenerateInitial(n string) byte {
 // Facts returns all the facts of an arguments,
 // positional and otherwise.
 func (a Argument) Facts() []*Fact {
-	return append(a.PositonalFacts, a.FlagFacts...)
+	return append(a.PositionalFacts, a.FlagFacts...)
 }

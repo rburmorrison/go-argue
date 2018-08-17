@@ -1,6 +1,8 @@
 package argue
 
 import (
+	"fmt"
+
 	"github.com/rburmorrison/go-argue/internal/mirror"
 )
 
@@ -86,4 +88,26 @@ func (f *Fact) SetPositional(p bool) *Fact {
 func (f *Fact) SetRequired(r bool) *Fact {
 	f.Required = r
 	return f
+}
+
+// usageHeader returns a string to be used with
+// the argument.PrintUsage function.
+func (f Fact) usageHeader() string {
+	if f.Positional {
+		return fmt.Sprintf("%s", UpperFactName(f.Name))
+	}
+
+	var s string
+	if f.Initial == 0 {
+		s = fmt.Sprintf("%s", f.DressedName())
+	} else {
+		s = fmt.Sprintf("%s %s", f.DressedInitial(), f.DressedName())
+	}
+
+	if f.Type != FactTypeBool {
+		valueString := " VALUE"
+		s += valueString
+	}
+
+	return s
 }
