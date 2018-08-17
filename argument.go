@@ -2,6 +2,7 @@ package argue
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"regexp"
 	"sort"
@@ -64,16 +65,30 @@ func (a Argument) Dispute(arguments []string, strict bool) error {
 		}
 	}
 
-	// Check for mismatched number of positionals
+	// Check for extra positional arguments
 	if len(ps) > len(a.PositionalFacts) {
 		if strict {
 			a.PrintError("too many positional arguments provided")
 		}
 
 		return ErrExtraPositionals
-	} else if len(ps) < len(a.PositionalFacts) {
+	}
+
+	// Make sure the last required argument is satisfied
+	lastPos := -1
+	for i, f := range a.PositionalFacts {
+		if f.Required {
+			lastPos = i
+		}
+	}
+
+	if lastPos > -1 && len(ps) < lastPos+1 {
 		if strict {
-			a.PrintError("not enough positional arguments provided")
+			if lastPos+1 == 1 {
+				a.PrintError(fmt.Sprintf("expected %d positional argument, but got %d", lastPos+1, len(ps)))
+			} else {
+				a.PrintError(fmt.Sprintf("expected %d positional arguments, but got %d", lastPos+1, len(ps)))
+			}
 		}
 
 		return ErrMissingPositionals
@@ -81,10 +96,11 @@ func (a Argument) Dispute(arguments []string, strict bool) error {
 
 	// Set values for positional facts
 	for i, s := range ps {
-		err := a.PositionalFacts[i].SetValue(s)
+		fact := a.PositionalFacts[i]
+		err := fact.SetValue(s)
 		if err != nil {
 			if strict {
-				a.PrintError(err.Error())
+				a.PrintError("positional argument " + UpperFactName(fact.Name) + " " + err.Error())
 			}
 
 			return ErrWrongType
@@ -112,7 +128,7 @@ func (a Argument) Dispute(arguments []string, strict bool) error {
 		err := f.SetValue(v)
 		if err != nil {
 			if strict {
-				a.PrintError(err.Error())
+				a.PrintError(k + " " + err.Error())
 			}
 
 			return ErrWrongType
@@ -128,7 +144,7 @@ func (a Argument) Dispute(arguments []string, strict bool) error {
 // should not include the call to the binary.
 func (a Argument) SplitArguments(arguments []string) ([]string, map[string]interface{}) {
 	// Define regular expressions
-	flagReg := regexp.MustCompile(`^-\S+$`)
+	flagReg := regexp.MustCompile(`^(-\S|--\S+)$`)
 
 	// Define structures to return
 	var positionalSlice []string
@@ -190,6 +206,32 @@ func (a Argument) SplitArguments(arguments []string) ([]string, map[string]inter
 	}
 
 	return positionalSlice, flagMap
+}
+
+// RequiredPositionals returns all positional facts
+// marked as required in the received arguments.
+func (a Argument) RequiredPositionals() []*Fact {
+	var facts []*Fact
+	for _, f := range a.PositionalFacts {
+		if f.Required {
+			facts = append(facts, f)
+		}
+	}
+
+	return facts
+}
+
+// RequiredFlags returns all flag facts marked as
+// required in the received arguments.
+func (a Argument) RequiredFlags() []*Fact {
+	var facts []*Fact
+	for _, f := range a.FlagFacts {
+		if f.Required {
+			facts = append(facts, f)
+		}
+	}
+
+	return facts
 }
 
 // NewArgument accepts a description and will return

@@ -103,13 +103,13 @@ func (f *Fact) SetValue(v interface{}) error {
 	case FactTypeString:
 		s, ok := v.(string)
 		if !ok {
-			return errors.New("--" + f.Name + " requires a string value")
+			return errors.New("requires a string value")
 		}
 		val.SetString(s)
 	case FactTypeBool:
 		b, ok := v.(bool)
 		if !ok {
-			return errors.New("--" + f.Name + " requires a boolean value")
+			return errors.New("requires a boolean value")
 		}
 		val.SetBool(b)
 	case FactTypeInt:
@@ -118,7 +118,7 @@ func (f *Fact) SetValue(v interface{}) error {
 		s := v.(string)
 		i, err := strconv.Atoi(s)
 		if err != nil {
-			return errors.New("--" + f.Name + " requires an integer value")
+			return errors.New("requires an integer value")
 		}
 		val.SetInt(int64(i))
 	case FactTypeUInt:
@@ -127,21 +127,21 @@ func (f *Fact) SetValue(v interface{}) error {
 		s := v.(string)
 		i, err := strconv.Atoi(s)
 		if err != nil {
-			return errors.New("--" + f.Name + " requires an non-negative integer value")
+			return errors.New("requires an non-negative integer value")
 		}
 		val.SetUint(uint64(i))
 	case FactTypeFloat32:
 		s := v.(string)
 		fl, err := strconv.ParseFloat(s, 32)
 		if err != nil {
-			return errors.New("--" + f.Name + " requires a 32-bit float value")
+			return errors.New("requires a 32-bit float value")
 		}
 		val.SetFloat(fl)
 	case FactTypeFloat64:
 		s := v.(string)
 		fl, err := strconv.ParseFloat(s, 64)
 		if err != nil {
-			return errors.New("--" + f.Name + " requires a 64-bit float value")
+			return errors.New("requires a 64-bit float value")
 		}
 		val.SetFloat(fl)
 	}

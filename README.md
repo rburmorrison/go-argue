@@ -17,30 +17,38 @@ Creating an argument parser with argue takes three steps.
 ```go
 package main
 
-import "github.com/rburmorrison/go-argue"
+import (
+	"fmt"
+	"os"
+
+	"github.com/rburmorrison/go-argue"
+)
 
 func main() {
-    // 1. Make a new argument and variables to store the
-    //    parsed values in 
-    var boolFlag1 bool
-    var intPositional1 int
-    agmt := argue.NewEmptyArgument()
+	// 1. Create placeholder variables
+	var tUInt uint
+	var tInt int
+	var tString = "Default text"
+	var tPos string
+	var tOther int
 
-    // 2. Supply facts (flags and positional arguments)
-    //    to your argument
-    agmt.AddFact("flag", "this is an example flag", &boolFlag1)
-    agmt.AddFact("positional", "this is an example positional argument", &intPositional1).
-        SetPositional(true).
-        SetRequired(true)
+	// 2. Create your argument and facts
+	agmt := argue.NewArgument("This is a test of the argument library.", "2.0.0")
+	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
+	agmt.AddFlagFact("int", "this is an integer", &tInt)
+	agmt.AddFlagFact("string", "this is a string", &tString)
+	agmt.AddPositionalFact("pos", "this is a positional string", &tPos).SetRequired(true)
+	agmt.AddPositionalFact("other", "this is another int", &tOther)
 
-    // 3. Propose your argument
-    agmt.Propose()
+	// 3. Dispute the command-line arguments
+	agmt.Dispute(os.Args[1:], true)
 
-    // Your variables are populated after Propose is run
-    fmt.Println("boolFlag1:", boolFlag1)
-    fmt.Println("intPositional1:", intPositional1)
-
-    // Run "yourexe --help" to see the usage information
+	// 4. Handle the results
+	fmt.Println("tUInt:", tUInt)
+	fmt.Println("tInt:", tInt)
+	fmt.Println("tString:", tString)
+	fmt.Println("tPos:", tPos)
+	fmt.Println("tOther:", tOther)
 }
 ```
 
