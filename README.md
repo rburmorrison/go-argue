@@ -78,7 +78,7 @@ Flags:
 
 ### Using a Struct
 
-Argue now supports auto-generation of aruguments from a struct.This idea was inspired by [go-arg](https://github.com/alexflint/go-arg), but is treated as an optional add-on in Argue. Each field accepts three tags:
+Argue now supports auto-generation of aruguments from a struct. This idea was inspired by [go-arg](https://github.com/alexflint/go-arg), but is treated as an optional add-on in Argue. Each field accepts three tags:
 
 - **options**: accepts the values "required" and "positional" separated by commas
 - **init**: accepts a letter to use as the initial for a fact
