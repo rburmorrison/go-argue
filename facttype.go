@@ -52,7 +52,7 @@ func GetFactType(v interface{}) (FactType, error) {
 	case "*float64":
 		t = FactTypeFloat64
 	default:
-		return FactType(0), ErrInvalidType
+		return FactType(-1), ErrInvalidType
 	}
 
 	return t, nil
