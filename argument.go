@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -28,6 +29,44 @@ type Argument struct {
 	FlagFacts       []*Fact
 	ShowDesc        bool
 	ShowVersion     bool
+}
+
+// NewArgumentFromStruct accepts a description and
+// will return a new Argument with that description
+// and default values. NewArgument also sets ShowDesc
+// and ShowVersion to true.
+func NewArgumentFromStruct(desc string, version string, str interface{}) Argument {
+	fmt.Println(reflect.ValueOf(str).Kind())
+
+	var agmt Argument
+	agmt.Description = desc
+	agmt.Version = version
+	agmt.ShowDesc = true
+	agmt.ShowVersion = true
+	return agmt
+}
+
+// NewArgument accepts a description and will return
+// a new Argument with that description and default
+// values. NewArgument also sets ShowDesc and
+// ShowVersion to true.
+func NewArgument(desc string, version string) Argument {
+	var agmt Argument
+	agmt.Description = desc
+	agmt.Version = version
+	agmt.ShowDesc = true
+	agmt.ShowVersion = true
+	return agmt
+}
+
+// NewEmptyArgument returns a new argument without a
+// description or version, and sets ShowDesc and
+// ShowVersion to false.
+func NewEmptyArgument() Argument {
+	agmt := NewArgument("", "")
+	agmt.ShowDesc = false
+	agmt.ShowVersion = false
+	return agmt
 }
 
 // Dispute uses the facts in the received argument
@@ -232,29 +271,6 @@ func (a Argument) RequiredFlags() []*Fact {
 	}
 
 	return facts
-}
-
-// NewArgument accepts a description and will return
-// a new Argument with that description and default
-// values. NewArgument also sets ShowDesc and
-// ShowVersion to true.
-func NewArgument(desc string, version string) Argument {
-	var agmt Argument
-	agmt.Description = desc
-	agmt.Version = version
-	agmt.ShowDesc = true
-	agmt.ShowVersion = true
-	return agmt
-}
-
-// NewEmptyArgument returns a new argument without a
-// description or version, and sets ShowDesc and
-// ShowVersion to false.
-func NewEmptyArgument() Argument {
-	agmt := NewArgument("", "")
-	agmt.ShowDesc = false
-	agmt.ShowVersion = false
-	return agmt
 }
 
 // AddFlagFact creates a new flag fact based on a

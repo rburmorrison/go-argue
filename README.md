@@ -31,7 +31,7 @@ func main() {
 	var tOther int
 
 	// 2. Create your argument and facts
-	agmt := argue.NewArgument("This is a test of the argument package.", "2.0.0")
+	agmt := argue.NewArgument("This is a test of the argument package.", "2.0.0") // or argue.NewEmptyArgument()
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
 	agmt.AddFlagFact("bool", "this is a boolean", &tBool)
