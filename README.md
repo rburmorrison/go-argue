@@ -50,6 +50,27 @@ func main() {
 }
 ```
 
+Usage information is automatically generated and can be viewed with `yourbinary -h`.
+
+```
+[user@localhost Desktop]$ yourbinary -h
+yourbinary 2.0.0
+This is a test of the argument library.
+
+Usage: yourbinary [--int VALUE] [--string VALUE] [--uint VALUE] POS OTHER
+
+Positional arguments:
+  POS                  this is a positional string
+  OTHER                this is another int
+
+Flags:
+  -i --int VALUE       this is an integer
+  -s --string VALUE    this is a string
+  -u --uint VALUE      this is a uint
+  -h --help            display this help and exit
+  -v --version         display version and exit
+```
+
 ## Bugs
 
 If you come across any bugs while using argue, please submit an issue to this repo.
