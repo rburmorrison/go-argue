@@ -124,5 +124,5 @@ If you come across any bugs while using argue, please submit an issue to this re
 
 ## Roadmap
 
-- [ ] Add the ability to construct an argument from a struct
+- [x] Add the ability to construct an argument from a struct
 - [ ] *Possibly* add support for sub-commands
