@@ -1,7 +1,10 @@
 package argue
 
 import (
+	"errors"
 	"fmt"
+	"reflect"
+	"strconv"
 
 	"github.com/rburmorrison/go-argue/internal/mirror"
 )
@@ -88,6 +91,62 @@ func (f *Fact) SetPositional(p bool) *Fact {
 func (f *Fact) SetRequired(r bool) *Fact {
 	f.Required = r
 	return f
+}
+
+// SetValue accepts a value and attempts to assign
+// the Value property of the received fact it's
+// parsed value. An error will be returned if that
+// is not possible.
+func (f *Fact) SetValue(v interface{}) error {
+	val := reflect.ValueOf(f.Value).Elem()
+	switch f.Type {
+	case FactTypeString:
+		s, ok := v.(string)
+		if !ok {
+			return errors.New("--" + f.Name + " requires a string value")
+		}
+		val.SetString(s)
+	case FactTypeBool:
+		b, ok := v.(bool)
+		if !ok {
+			return errors.New("--" + f.Name + " requires a boolean value")
+		}
+		val.SetBool(b)
+	case FactTypeInt:
+		fallthrough
+	case FactTypeInt64:
+		s := v.(string)
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return errors.New("--" + f.Name + " requires an integer value")
+		}
+		val.SetInt(int64(i))
+	case FactTypeUInt:
+		fallthrough
+	case FactTypeUInt64:
+		s := v.(string)
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			return errors.New("--" + f.Name + " requires an non-negative integer value")
+		}
+		val.SetUint(uint64(i))
+	case FactTypeFloat32:
+		s := v.(string)
+		fl, err := strconv.ParseFloat(s, 32)
+		if err != nil {
+			return errors.New("--" + f.Name + " requires a 32-bit float value")
+		}
+		val.SetFloat(fl)
+	case FactTypeFloat64:
+		s := v.(string)
+		fl, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return errors.New("--" + f.Name + " requires a 64-bit float value")
+		}
+		val.SetFloat(fl)
+	}
+
+	return nil
 }
 
 // usageHeader returns a string to be used with

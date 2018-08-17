@@ -2,6 +2,7 @@ package argue
 
 import (
 	"errors"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -9,7 +10,11 @@ import (
 
 // Error Definitions
 var (
-	ErrMismatchedPositionals = errors.New("argue: too many positional arguments provided")
+	ErrExtraPositionals   = errors.New("argue: too many positional arguments provided")
+	ErrMissingPositionals = errors.New("argue: not enough positional arguments provided")
+	ErrUnknownFlag        = errors.New("argue: dispute found an unknown flag while parsing")
+	ErrWrongType          = errors.New("argue: fact was not able to set a value due to mismatched types")
+	ErrNilValue           = errors.New("argue: nil was passed to a flag")
 )
 
 // Argument represents the rules and information that
@@ -22,6 +27,99 @@ type Argument struct {
 	FlagFacts       []*Fact
 	ShowDesc        bool
 	ShowVersion     bool
+}
+
+// Dispute uses the facts in the received argument
+// to parse the passed arguments. An error will be
+// returned if Dispute fails to parse the arguments
+// as it expects to. Optionally, setting "strict" to
+// true will automatically print an error message to
+// the console and exit the program on failing.
+func (a Argument) Dispute(arguments []string, strict bool) error {
+	ps, fm := a.SplitArguments(arguments)
+
+	// Handle printing help and version if they exist
+	for k := range fm {
+		if k == "-h" || k == "--help" {
+			a.PrintUsage()
+			os.Exit(0)
+		}
+
+		if a.ShowVersion && (k == "-v" || k == "--version") {
+			a.PrintVersion()
+			os.Exit(0)
+		}
+	}
+
+	// Check for unknown flags
+	for k := range fm {
+		_, nok := a.DressedNameExists(k)
+		_, iok := a.DressedInitialExists(k)
+		if !nok && !iok {
+			if strict {
+				a.PrintError("unknown flag " + k + " provided")
+			}
+
+			return ErrUnknownFlag
+		}
+	}
+
+	// Check for mismatched number of positionals
+	if len(ps) > len(a.PositionalFacts) {
+		if strict {
+			a.PrintError("too many positional arguments provided")
+		}
+
+		return ErrExtraPositionals
+	} else if len(ps) < len(a.PositionalFacts) {
+		if strict {
+			a.PrintError("not enough positional arguments provided")
+		}
+
+		return ErrMissingPositionals
+	}
+
+	// Set values for positional facts
+	for i, s := range ps {
+		err := a.PositionalFacts[i].SetValue(s)
+		if err != nil {
+			if strict {
+				a.PrintError(err.Error())
+			}
+
+			return ErrWrongType
+		}
+	}
+
+	// Set values for flag facts
+	for k, v := range fm {
+		// Check if the value provided was nil
+		if v == nil {
+			if strict {
+				a.PrintError("no value was provided for " + k)
+			}
+
+			return ErrNilValue
+		}
+
+		// Get the fact that correspons with the key
+		f, nameExists := a.DressedNameExists(k)
+		if !nameExists {
+			f2, _ := a.DressedInitialExists(k)
+			f = f2
+		}
+
+		err := f.SetValue(v)
+		if err != nil {
+			if strict {
+				a.PrintError(err.Error())
+			}
+
+			return ErrWrongType
+		}
+	}
+
+	return nil
 }
 
 // SplitArguments splits command-line arguments into
