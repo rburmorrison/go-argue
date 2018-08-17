@@ -40,7 +40,7 @@ func main() {
 	agmt.AddPositionalFact("other", "this is another int", &tOther).SetRequired(false)
 
 	// 3. Dispute the command-line arguments
-	agmt.Dispute(os.Args[1:], true)
+	agmt.Dispute(true)
 
 	// 4. Handle the results
 	fmt.Println("tUInt:", tUInt)

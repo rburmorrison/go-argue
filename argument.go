@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"reflect"
 	"regexp"
 	"sort"
 	"strings"
@@ -31,51 +30,20 @@ type Argument struct {
 	ShowVersion     bool
 }
 
-// NewArgumentFromStruct accepts a description and
-// will return a new Argument with that description
-// and default values. NewArgument also sets ShowDesc
-// and ShowVersion to true.
-func NewArgumentFromStruct(desc string, version string, str interface{}) Argument {
-	fmt.Println(reflect.ValueOf(str).Kind())
-
-	var agmt Argument
-	agmt.Description = desc
-	agmt.Version = version
-	agmt.ShowDesc = true
-	agmt.ShowVersion = true
-	return agmt
+// Dispute passes os.Args[1:] to DisputeCustom as
+// these are the most common arguments to parse.
+func (a Argument) Dispute(strict bool) error {
+	return a.DisputeCustom(os.Args[1:], strict)
 }
 
-// NewArgument accepts a description and will return
-// a new Argument with that description and default
-// values. NewArgument also sets ShowDesc and
-// ShowVersion to true.
-func NewArgument(desc string, version string) Argument {
-	var agmt Argument
-	agmt.Description = desc
-	agmt.Version = version
-	agmt.ShowDesc = true
-	agmt.ShowVersion = true
-	return agmt
-}
-
-// NewEmptyArgument returns a new argument without a
-// description or version, and sets ShowDesc and
-// ShowVersion to false.
-func NewEmptyArgument() Argument {
-	agmt := NewArgument("", "")
-	agmt.ShowDesc = false
-	agmt.ShowVersion = false
-	return agmt
-}
-
-// Dispute uses the facts in the received argument
-// to parse the passed arguments. An error will be
-// returned if Dispute fails to parse the arguments
-// as it expects to. Optionally, setting "strict" to
-// true will automatically print an error message to
-// the console and exit the program on failing.
-func (a Argument) Dispute(arguments []string, strict bool) error {
+// DisputeCustom uses the facts in the received
+// argument to parse the passed arguments. An error
+// will be returned if Dispute fails to parse the
+// arguments as it expects to. Optionally, setting
+// "strict" to true will automatically print an error
+// message to the console and exit the program on
+// failing.
+func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 	ps, fm := a.SplitArguments(arguments)
 
 	// Handle printing help and version if they exist
