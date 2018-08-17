@@ -7,13 +7,13 @@ func TestStandardizeFactName(t *testing.T) {
 	expectedS := "a-test-name"
 	s := StandardizeFactName(testS)
 	if s != expectedS {
-		t.Errorf("StandardizeFactName was incorrect, got: %s, want: %s", testS, expectedS)
+		t.Errorf("StandardizeFactName was incorrect, got: %s, expected: %s", testS, expectedS)
 	}
 
 	testS = "A Test   ----------     Name"
 	expectedS = "ATESTNAME"
 	s = UpperFactName(testS)
 	if s != expectedS {
-		t.Errorf("UpperFactName was incorrect, got: %s, want: %s", testS, expectedS)
+		t.Errorf("UpperFactName was incorrect, got: %s, expected: %s", testS, expectedS)
 	}
 }

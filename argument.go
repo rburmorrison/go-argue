@@ -294,11 +294,11 @@ func (a *Argument) SortFlagFacts() {
 	})
 }
 
-// DressedNameExists returns true if any facts within
-// the argument has the dressed name passed, false
-// otherwise.
+// DressedNameExists returns true if any flag facts
+// within the argument has the dressed name passed,
+// false otherwise.
 func (a Argument) DressedNameExists(dn string) (*Fact, bool) {
-	fs := a.Facts()
+	fs := a.FlagFacts
 
 	for _, f := range fs {
 		if f.DressedName() == dn {

@@ -1,3 +1,5 @@
+// Package argue implements functions for parsing
+// command-line arguments.
 package argue
 
 import (
