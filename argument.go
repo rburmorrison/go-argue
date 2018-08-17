@@ -281,7 +281,7 @@ func (a *Argument) AddPositionalFact(name string, help string, v interface{}) *F
 		panic("argument: name already exits within this argument")
 	}
 
-	fact := NewFact(help, name, a.GenerateInitial(name), true, false, v)
+	fact := NewFact(help, name, 0, true, true, v)
 	a.PositionalFacts = append(a.PositionalFacts, &fact)
 	return &fact
 }

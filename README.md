@@ -35,8 +35,8 @@ func main() {
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
 	agmt.AddFlagFact("string", "this is a string", &tString)
-	agmt.AddPositionalFact("pos", "this is a positional string", &tPos).SetRequired(true)
-	agmt.AddPositionalFact("other", "this is another int", &tOther)
+	agmt.AddPositionalFact("pos", "this is a positional string", &tPos)
+	agmt.AddPositionalFact("other", "this is another int", &tOther).SetRequired(false)
 
 	// 3. Dispute the command-line arguments
 	agmt.Dispute(os.Args[1:], true)
