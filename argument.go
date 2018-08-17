@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/rburmorrison/go-argue/internal/mirror"
 )
 
 // Error Definitions
@@ -36,13 +38,74 @@ type Argument struct {
 // and default values. NewArgument also sets ShowDesc
 // and ShowVersion to true.
 func NewArgumentFromStruct(desc string, version string, str interface{}) Argument {
-	fmt.Println(reflect.ValueOf(str).Kind())
-
 	var agmt Argument
 	agmt.Description = desc
 	agmt.Version = version
 	agmt.ShowDesc = true
 	agmt.ShowVersion = true
+
+	// Check if passed str is a pointer
+	if !mirror.IsPointer(str) {
+		panic("argue: non-pointer value passed to NewArgumentFromStruct")
+	}
+
+	// Check if passed str is a structure.
+	if !mirror.IsPointerToStruct(str) {
+		panic("argue: value passed to NewArgumentFromStruct is not a pointer to a struct")
+	}
+
+	// Analze fields in the struct, checking tags and
+	// types to attepmpt to automatically add facts
+	indir := reflect.Indirect(reflect.ValueOf(str))
+	for i := 0; i < indir.Type().NumField(); i++ {
+		field := indir.Type().Field(i)
+		tag := field.Tag
+
+		// Create variables that the fact will need
+		init := byte(0)
+		positional := false
+		required := false
+		name := breakCammelCase(field.Name)
+
+		// Check if an initial is specified
+		if val, ok := tag.Lookup("init"); ok {
+			val = strings.TrimSpace(val)
+			if len(val) != 0 {
+				panic("argue: initial provided to " + field.Name + " must be of length 1")
+			}
+
+			init = byte(val[0])
+			if _, ok := agmt.InitialExists(init); ok {
+				panic("argue: initial provided to " + field.Name + " already exists")
+			}
+		} else {
+			init = agmt.GenerateInitial(name)
+		}
+
+		// Check options to determine if this field is
+		// positional or required
+		if val, ok := tag.Lookup("options"); ok {
+			spaceRepl := strings.NewReplacer(" ", "")
+			val = spaceRepl.Replace(val)
+			options := strings.Split(val, ",")
+			for _, o := range options {
+				o = strings.ToUpper(o)
+				if o == "REQUIRED" {
+					required = true
+				} else if o == "POSITIONAL" {
+					positional = true
+				}
+			}
+		}
+
+		var temp string
+		if positional {
+			agmt.AddPositionalFact(name, tag.Get("help"), &temp).SetRequired(required)
+		} else {
+			agmt.AddFlagFact(name, tag.Get("help"), &temp).SetRequired(required)
+		}
+	}
+
 	return agmt
 }
 

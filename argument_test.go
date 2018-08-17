@@ -35,7 +35,7 @@ func TestSplitArguments(t *testing.T) {
 	}
 }
 
-func TestDispute(t *testing.T) {
+func TestDisputeCustom(t *testing.T) {
 	var tUInt uint
 	var tInt int
 	var tBool bool
@@ -52,14 +52,14 @@ func TestDispute(t *testing.T) {
 	agmt.AddPositionalFact("other", "this is another int", &tOther)
 
 	arguments := []string{"--int", "123", "--string", "test string", "asdf"}
-	err := agmt.Dispute(arguments, false)
+	err := agmt.DisputeCustom(arguments, false)
 	if err != ErrMissingPositionals {
-		t.Errorf("Dispute was incorrect, expected: ErrMissingPositionals, got %v", err)
+		t.Errorf("DisputeCustom was incorrect, expected: ErrMissingPositionals, got %v", err)
 	}
 
 	arguments = []string{"--int", "123", "--string", "test string", "asdf", "123", "--other"}
-	err = agmt.Dispute(arguments, false)
+	err = agmt.DisputeCustom(arguments, false)
 	if err != ErrUnknownFlag {
-		t.Errorf("Dispute was incorrect, expected: ErrUnknownFlag, got %v", err)
+		t.Errorf("DisputeCustom was incorrect, expected: ErrUnknownFlag, got %v", err)
 	}
 }
