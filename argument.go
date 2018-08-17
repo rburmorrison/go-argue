@@ -66,7 +66,7 @@ func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
 			}
 
 			init = byte(val[0])
-			if _, ok := agmt.InitialExists(init); ok {
+			if _, ok := agmt.InitialExists(init); ok || init == byte("h"[0]) || (agmt.ShowVersion && init == byte("v"[0])) {
 				panic("argue: initial provided to " + field.Name + " already exists")
 			}
 		} else {
