@@ -33,17 +33,7 @@ type Argument struct {
 	ShowVersion     bool
 }
 
-// NewArgumentFromStruct accepts a description and
-// will return a new Argument with that description
-// and default values. NewArgument also sets ShowDesc
-// and ShowVersion to true.
-func NewArgumentFromStruct(desc string, version string, str interface{}) Argument {
-	var agmt Argument
-	agmt.Description = desc
-	agmt.Version = version
-	agmt.ShowDesc = true
-	agmt.ShowVersion = true
-
+func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
 	// Check if passed str is a pointer
 	if !mirror.IsPointer(str) {
 		panic("argue: non-pointer value passed to NewArgumentFromStruct")
@@ -56,7 +46,7 @@ func NewArgumentFromStruct(desc string, version string, str interface{}) Argumen
 
 	// Analze fields in the struct, checking tags and
 	// types to attepmpt to automatically add facts
-	indir := reflect.Indirect(reflect.ValueOf(str))
+	indir := reflect.Indirect(reflect.ValueOf(str).Elem())
 	for i := 0; i < indir.Type().NumField(); i++ {
 		field := indir.Type().Field(i)
 		tag := field.Tag
@@ -66,11 +56,12 @@ func NewArgumentFromStruct(desc string, version string, str interface{}) Argumen
 		positional := false
 		required := false
 		name := breakCammelCase(field.Name)
+		name = StandardizeFactName(name)
 
 		// Check if an initial is specified
 		if val, ok := tag.Lookup("init"); ok {
 			val = strings.TrimSpace(val)
-			if len(val) != 0 {
+			if len(val) != 1 {
 				panic("argue: initial provided to " + field.Name + " must be of length 1")
 			}
 
@@ -98,15 +89,39 @@ func NewArgumentFromStruct(desc string, version string, str interface{}) Argumen
 			}
 		}
 
-		var temp string
+		fieldPointer := indir.Field(i).Addr().Interface()
 		if positional {
-			agmt.AddPositionalFact(name, tag.Get("help"), &temp).SetRequired(required)
+			agmt.AddPositionalFact(name, tag.Get("help"), fieldPointer).SetRequired(required)
 		} else {
-			agmt.AddFlagFact(name, tag.Get("help"), &temp).SetRequired(required)
+			agmt.AddFlagFact(name, tag.Get("help"), fieldPointer).SetRequired(required).SetInitial(init)
 		}
 	}
 
 	return agmt
+}
+
+// NewArgumentFromStruct accepts a description and
+// will return a new Argument with that description
+// and default values. NewArgument also sets ShowDesc
+// and ShowVersion to true.
+func NewArgumentFromStruct(desc string, version string, str interface{}) Argument {
+	var agmt Argument
+	agmt.Description = desc
+	agmt.Version = version
+	agmt.ShowDesc = true
+	agmt.ShowVersion = true
+	return newArgumentFromStruct(agmt, str)
+}
+
+// NewEmptyArgumentFromStruct accepts a struct and
+// will auto-build an argument from it based on the
+// tags attached to the fields. This will disable
+// printing for the version and description.
+func NewEmptyArgumentFromStruct(str interface{}) Argument {
+	var agmt Argument
+	agmt.ShowDesc = false
+	agmt.ShowVersion = false
+	return newArgumentFromStruct(agmt, str)
 }
 
 // NewArgument accepts a description and will return

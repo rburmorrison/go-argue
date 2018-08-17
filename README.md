@@ -10,6 +10,8 @@ Run `go get github.com/rburmorrison/go-argue`.
 
 ## Usage
 
+### Basic
+
 Creating an argument parser with argue takes four steps.
 
 ```go
@@ -72,6 +74,48 @@ Flags:
   -u, --uint VALUE      this is a uint
   -h, --help            display this help and exit
   -v, --version         display version and exit
+```
+
+### Using a Struct
+
+Argue now supports auto-generation of aruguments from a struct.This idea was inspired by [go-arg](https://github.com/alexflint/go-arg), but is treated as an optional add-on in Argue. Each field accepts three tags:
+
+- **options**: accepts the values "required" and "positional" separated by commas
+- **init**: accepts a letter to use as the initial for a fact
+- **help**: the description of a fact to display in the argument's usage
+
+All fields are assumed to be flags unless explicitly stated otherwise in the options.
+
+**Example Usage**
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/rburmorrison/go-argue"
+)
+
+// 1. Define a struct
+type example struct {
+	Field1     int  `options:"required,positional" help:"this is field1"`
+	BoolField2 bool `init:"a" help:"this is boolean2"`
+}
+
+func main() {
+	// 2. Create an instance of the struct and generate
+	//    an argument from it
+	var e example
+	agmt := argue.NewEmptyArgumentFromStruct(&e)
+
+	// 3. Dispute the command-line arguments
+	agmt.Dispute(true)
+
+	// 4. Handle the results
+	fmt.Println("e.Field1:", e.Field1)
+	fmt.Println("e.Bool2:", e.BoolField2)
+}
 ```
 
 ## Bugs
