@@ -30,13 +30,20 @@ type Argument struct {
 	ShowVersion     bool
 }
 
-// Dispute uses the facts in the received argument
-// to parse the passed arguments. An error will be
-// returned if Dispute fails to parse the arguments
-// as it expects to. Optionally, setting "strict" to
-// true will automatically print an error message to
-// the console and exit the program on failing.
-func (a Argument) Dispute(arguments []string, strict bool) error {
+// Dispute passes os.Args[1:] to DisputeCustom as
+// these are the most common arguments to parse.
+func (a Argument) Dispute(strict bool) error {
+	return a.DisputeCustom(os.Args[1:], strict)
+}
+
+// DisputeCustom uses the facts in the received
+// argument to parse the passed arguments. An error
+// will be returned if Dispute fails to parse the
+// arguments as it expects to. Optionally, setting
+// "strict" to true will automatically print an error
+// message to the console and exit the program on
+// failing.
+func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 	ps, fm := a.SplitArguments(arguments)
 
 	// Handle printing help and version if they exist
