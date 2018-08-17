@@ -1,5 +1,7 @@
 # Argue
 
+**VERSION 2.x.x IS STILL IN PRORGESS**
+
 A sassy Golang package for parsing command-line arguments.
 
 **Note:** This project is a work in progress. See the roadmap below for details.
