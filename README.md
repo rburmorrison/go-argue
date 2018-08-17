@@ -50,7 +50,7 @@ func main() {
 }
 ```
 
-Usage information is automatically generated and can be viewed with `yourbinary -h`.
+Usage information is automatically generated and can be viewed with `yourbinary --help`.
 
 ```
 [user@localhost Desktop]$ yourbinary --help
