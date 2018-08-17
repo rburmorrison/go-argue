@@ -53,7 +53,7 @@ func main() {
 Usage information is automatically generated and can be viewed with `yourbinary -h`.
 
 ```
-[user@localhost Desktop]$ yourbinary -h
+[user@localhost Desktop]$ yourbinary --help
 yourbinary 2.0.0
 This is a test of the argument library.
 
