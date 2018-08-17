@@ -160,7 +160,7 @@ func (f Fact) usageHeader() string {
 	if f.Initial == 0 {
 		s = fmt.Sprintf("%s", f.DressedName())
 	} else {
-		s = fmt.Sprintf("%s %s", f.DressedInitial(), f.DressedName())
+		s = fmt.Sprintf("%s, %s", f.DressedInitial(), f.DressedName())
 	}
 
 	if f.Type != FactTypeBool {

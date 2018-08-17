@@ -34,6 +34,7 @@ func main() {
 	agmt := argue.NewArgument("This is a test of the argument package.", "2.0.0")
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
+	agmt.AddFlagFact("bool", "this is a boolean", &tBool)
 	agmt.AddFlagFact("string", "this is a string", &tString)
 	agmt.AddPositionalFact("pos", "this is a positional string", &tPos)
 	agmt.AddPositionalFact("other", "this is another int", &tOther).SetRequired(false)
@@ -44,6 +45,7 @@ func main() {
 	// 4. Handle the results
 	fmt.Println("tUInt:", tUInt)
 	fmt.Println("tInt:", tInt)
+	fmt.Println("tBool:", tBool)
 	fmt.Println("tString:", tString)
 	fmt.Println("tPos:", tPos)
 	fmt.Println("tOther:", tOther)
@@ -64,11 +66,12 @@ Positional arguments:
   OTHER                this is another int
 
 Flags:
-  -i --int VALUE       this is an integer
-  -s --string VALUE    this is a string
-  -u --uint VALUE      this is a uint
-  -h --help            display this help and exit
-  -v --version         display version and exit
+  -b, --bool            this is a boolean
+  -i, --int VALUE       this is an integer
+  -s, --string VALUE    this is a string
+  -u, --uint VALUE      this is a uint
+  -h, --help            display this help and exit
+  -v, --version         display version and exit
 ```
 
 ## Bugs
