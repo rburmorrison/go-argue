@@ -81,7 +81,7 @@ Flags:
 Argue now supports auto-generation of aruguments from a struct. This idea was inspired by [go-arg](https://github.com/alexflint/go-arg), but is treated as an optional add-on in Argue. Each field accepts three tags:
 
 - **options**: accepts the values "required" and "positional" separated by commas
-- **init**: accepts a letter to use as the initial for a fact
+- **init**: accepts a letter to use as the initial for a fact or nothing for no initial
 - **help**: the description of a fact to display in the argument's usage
 
 All fields are assumed to be flags unless explicitly stated otherwise in the options.

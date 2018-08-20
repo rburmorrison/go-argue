@@ -61,11 +61,17 @@ func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
 		// Check if an initial is specified
 		if val, ok := tag.Lookup("init"); ok {
 			val = strings.TrimSpace(val)
-			if len(val) != 1 {
-				panic("argue: initial provided to " + field.Name + " must be of length 1")
+			if len(val) > 1 {
+				panic("argue: initial provided to " + field.Name + " must be of length 1 or empty")
 			}
 
-			init = byte(val[0])
+			// Set initial to zero if nothing was specified
+			if val == "" {
+				init = byte(0)
+			} else {
+				init = byte(val[0])
+			}
+
 			if _, ok := agmt.InitialExists(init); ok || init == byte("h"[0]) || (agmt.ShowVersion && init == byte("v"[0])) {
 				panic("argue: initial provided to " + field.Name + " already exists")
 			}
