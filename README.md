@@ -8,6 +8,10 @@ A sassy Golang package for parsing command-line arguments.
 
 Run `go get github.com/rburmorrison/go-argue`.
 
+## Documentation
+
+[https://godoc.org/github.com/rburmorrison/go-argue](https://godoc.org/github.com/rburmorrison/go-argue)
+
 ## Usage
 
 ### Basic
