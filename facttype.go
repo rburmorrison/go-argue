@@ -1,15 +1,8 @@
 package argue
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
-)
-
-// Error Definitions
-var (
-	ErrInvalidType = errors.New("argue: invalid type passed to GetFactType. " +
-		"Options are *string, *bool, *int, *int64, *uint, *uint64, *float32, and *float64")
 )
 
 // FactType represents the data type that a fact will

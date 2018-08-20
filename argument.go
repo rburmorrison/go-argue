@@ -1,7 +1,6 @@
 package argue
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"reflect"
@@ -10,15 +9,6 @@ import (
 	"strings"
 
 	"github.com/rburmorrison/go-argue/internal/mirror"
-)
-
-// Error Definitions
-var (
-	ErrExtraPositionals   = errors.New("argue: too many positional arguments provided")
-	ErrMissingPositionals = errors.New("argue: not enough positional arguments provided")
-	ErrUnknownFlag        = errors.New("argue: dispute found an unknown flag while parsing")
-	ErrWrongType          = errors.New("argue: fact was not able to set a value due to mismatched types")
-	ErrNilValue           = errors.New("argue: nil was passed to a flag")
 )
 
 // Argument represents the rules and information that
