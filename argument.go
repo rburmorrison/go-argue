@@ -115,8 +115,6 @@ func NewArgumentFromStruct(desc string, version string, str interface{}) Argumen
 // printing for the version and description.
 func NewEmptyArgumentFromStruct(str interface{}) Argument {
 	var agmt Argument
-	agmt.ShowDesc = false
-	agmt.ShowVersion = false
 	return newArgumentFromStruct(agmt, str)
 }
 
