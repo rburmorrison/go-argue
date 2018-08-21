@@ -37,7 +37,7 @@ func main() {
 	var tOther int
 
 	// 2. Create your argument and facts
-	agmt := argue.NewArgument("This is a test of the argument package.", "2.0.1") // or argue.NewEmptyArgument()
+	agmt := argue.NewArgument("This is a test of the argument package.", "2.3.0") // or argue.NewEmptyArgument()
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
 	agmt.AddFlagFact("bool", "this is a boolean", &tBool)
@@ -122,6 +122,51 @@ func main() {
 }
 ```
 
+### Sub-Commands
+When you have more than one argument, you might want to use a Lawyer to help you get them straight. Here is full-featured example of how to use a Lawyer:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	argue "github.com/rburmorrison/go-argue"
+)
+
+type commOne struct {
+	Field1     int  `options:"required,positional" help:"this is field1"`
+	BoolField2 bool `init:"a" help:"this is boolean2"`
+	Variable   bool `init:""`
+}
+
+type commTwo struct {
+	Var1    int  `options:"required,positional" help:"this is field1"`
+	Second2 bool `init:"a" help:"this is boolean2"`
+	Change  bool `init:""`
+}
+
+func main() {
+	var one commOne
+	var two commTwo
+	var variable bool
+	law := argue.NewLawyer("This is a test of the arugment package.", "x.x.x")
+	law.AddFact("test", "this is just a test flag", &variable)
+	law.AddArgumentFromStruct("one", "this is the first", &one).SetHandler(func(arg *argue.Argument) {
+		fmt.Println("one was run!")
+	})
+
+	law.AddArgumentFromStruct("two", "this is the second", &two).SetHandler(func(arg *argue.Argument) {
+		fmt.Println("two was run!")
+	})
+
+	law.TakeCase(true)
+	fmt.Println("variable", variable)
+}
+```
+
+Running `yourbinary --help` will show you the usage information that is a bit different than what you'd see when you use a single argument. A handler can be attached to an Argument, and the Lawyer will call that function if that command is run by the user. This allows you to separate concerns. 
+
 ## Bugs
 
 If you come across any bugs while using argue, please submit an issue to this repo.
@@ -129,4 +174,4 @@ If you come across any bugs while using argue, please submit an issue to this re
 ## Roadmap
 
 - [x] Add the ability to construct an argument from a struct
-- [ ] *Possibly* add support for sub-commands
+- [x] Add support for sub-commands
