@@ -15,7 +15,7 @@ type Lawyer struct {
 	ShowDesc     bool
 	ShowVersion  bool
 
-	facts []Fact
+	defaultArgument Argument
 }
 
 // NewLawyer returns a new Lawyer with the version
@@ -36,6 +36,18 @@ func NewEmptyLawyer() Lawyer {
 	law.ShowDesc = false
 	law.ShowVersion = false
 	return law
+}
+
+// AddFact adds a fact to the Lawyer. Facts may not
+// be positional as that would conflict with the
+// sub-arguments.
+func (l *Lawyer) AddFact(name string, help string, req bool, v interface{}) {
+	name = StandardizeFactName(name)
+	if _, ok := l.defaultArgument.NameExists(name); ok {
+		panic("argument: fact name already exits within this lawyer")
+	}
+
+	l.defaultArgument.AddFlagFact(name, help, v).SetRequired(req)
 }
 
 // AddArgument offers a new argument to the Lawyer
@@ -85,5 +97,33 @@ func (l Lawyer) TakeCase(mw bool) error {
 // that the Lawyer has. The arguments passed to this
 // function should not include the binary name.
 func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
+	// command := arguments
+
+	// Extract all flags up to a command
+	var flags []string
+	for _, arg := range arguments {
+		if flagReg.MatchString(arg) {
+			flags = append(flags, arg)
+
+			// Shave off this flag
+			// command = command[1:]
+		} else {
+			break
+		}
+	}
+
+	// Check if --help or --version are present
+	for _, f := range flags {
+		if l.ShowVersion && (f == "-v" || f == "--version") {
+			l.PrintVersion()
+		}
+	}
+
+	// Try to dispute the default flags
+	err := l.defaultArgument.DisputeCustom(flags, mw)
+	if !mw && err != nil {
+		return err
+	}
+
 	return nil
 }

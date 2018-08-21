@@ -10,6 +10,15 @@ import (
 func (l Lawyer) PrintUsage() {
 	spacing := 4
 
+	// Define help and version flags
+	var dummy bool
+	helpFact := NewFact("display this help and exit", "help", byte("h"[0]), false, false, &dummy)
+	versionFact := NewFact("display version and exit", "version", byte("v"[0]), false, false, &dummy)
+	factBank := append(l.defaultArgument.FlagFacts, &helpFact)
+	if l.ShowVersion {
+		factBank = append(factBank, &versionFact)
+	}
+
 	// Calculate the largest sub-command name for spacing
 	// purposes
 	cmdWidth := 0
@@ -22,23 +31,30 @@ func (l Lawyer) PrintUsage() {
 
 	// Calculate the largest flag header for spacing
 	// purposes
-	// -> flagWidth := 11 // Start with --help width
-	// -> if l.ShowVersion {
-	// -> 	flagWidth = 14 // Change to --version if showing
-	// -> }
+	flagWidth := 0 // Start with --help width
+	for _, f := range factBank {
+		length := len(f.usageHeader()) + 2
+		if length > flagWidth {
+			flagWidth = length
+		}
+	}
 
 	if l.ShowVersion {
-		fmt.Println(binaryName() + " " + l.Version)
+		l.PrintVersion()
 	}
 
 	if l.ShowDesc {
 		fmt.Println(l.Description + "\n")
 	}
 
-	// Temporary
+	// Print flags
 	fmt.Println("Flags:")
-	fmt.Println("  -h --help       display this help and exit")
-	fmt.Println("  -v --version    display version and exit")
+	for _, f := range factBank {
+		header := "  " + f.usageHeader()
+		extra := flagWidth - len(header)
+		space := strings.Repeat(" ", spacing+extra)
+		fmt.Println(header + space + f.Help)
+	}
 	fmt.Println()
 
 	// Display sub-commands
@@ -53,4 +69,10 @@ func (l Lawyer) PrintUsage() {
 
 	fmt.Println()
 	fmt.Printf("Run '%s <command> --help' for details about a command.\n", binaryName())
+}
+
+// PrintVersion prints the version specified by the
+// Lawyer.
+func (l Lawyer) PrintVersion() {
+	fmt.Println(binaryName() + " " + l.Version)
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"regexp"
 	"sort"
 	"strings"
 
@@ -192,6 +191,24 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 		return ErrExtraPositionals
 	}
 
+	// Check if all required flags are present
+	for _, f := range a.RequiredFlags() {
+		var flagFound bool
+		for k := range fm {
+			if k == f.DressedInitial() || k == f.DressedName() {
+				flagFound = true
+			}
+		}
+
+		if !flagFound {
+			if strict {
+				a.PrintError(fmt.Sprintf("flag %s is required", f.DressedName()))
+			}
+
+			return ErrMissingFlag
+		}
+	}
+
 	// Make sure the last required argument is satisfied
 	lastPos := -1
 	for i, f := range a.PositionalFacts {
@@ -261,9 +278,6 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 // returned in that order. The passed arguments
 // should not include the call to the binary.
 func (a Argument) SplitArguments(arguments []string) ([]string, map[string]interface{}) {
-	// Define regular expressions
-	flagReg := regexp.MustCompile(`^(-\S|--\S+)$`)
-
 	// Define structures to return
 	var positionalSlice []string
 	var flagMap = make(map[string]interface{})

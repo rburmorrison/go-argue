@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"regexp"
 	"unicode"
 )
 
@@ -13,11 +14,17 @@ import (
 var (
 	ErrExtraPositionals   = errors.New("argue: too many positional arguments provided")
 	ErrMissingPositionals = errors.New("argue: not enough positional arguments provided")
+	ErrMissingFlag        = errors.New("argue: a required flag is missing")
 	ErrUnknownFlag        = errors.New("argue: dispute found an unknown flag while parsing")
 	ErrWrongType          = errors.New("argue: fact was not able to set a value due to mismatched types")
 	ErrNilValue           = errors.New("argue: nil was passed to a flag")
 	ErrInvalidType        = errors.New("argue: invalid type passed to GetFactType. " +
 		"Options are *string, *bool, *int, *int64, *uint, *uint64, *float32, and *float64")
+)
+
+// Define regular expressions
+var (
+	flagReg = regexp.MustCompile(`^(-\S|--\S+)$`)
 )
 
 func binaryName() string {
