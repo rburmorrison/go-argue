@@ -14,6 +14,8 @@ type Lawyer struct {
 	SubArguments []SubArgument
 	ShowDesc     bool
 	ShowVersion  bool
+
+	facts []Fact
 }
 
 // NewLawyer returns a new Lawyer with the version
@@ -48,6 +50,8 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 	sarg.Name = n
 	sarg.Help = h
 	sarg.Argument = arg
+
+	l.SubArguments = append(l.SubArguments, sarg)
 	return &sarg
 }
 

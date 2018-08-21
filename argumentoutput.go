@@ -15,7 +15,7 @@ func printFact(w int, s int, f Fact) {
 
 // PrintError accepts a message and will print it
 // as an error message along with the received
-// argument's usage line. This will exit the program
+// Argument's usage line. This will exit the program
 // with an error code of 1.
 func (a Argument) PrintError(msg string) {
 	fmt.Printf("Error: %v\n", msg)
@@ -24,7 +24,7 @@ func (a Argument) PrintError(msg string) {
 }
 
 // PrintUsage writes the usage information of the
-// recieved argument to the standard output.
+// recieved Argument to the standard output.
 func (a Argument) PrintUsage() {
 	spacing := 4
 
@@ -43,7 +43,7 @@ func (a Argument) PrintUsage() {
 	a.SortFlagFacts()
 	width := 0
 	for _, f := range factBank {
-		l := len("  " + f.usageHeader())
+		l := len(f.usageHeader()) + 2
 		if l > width {
 			width = l
 		}
