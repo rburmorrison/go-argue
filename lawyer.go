@@ -97,7 +97,7 @@ func (l Lawyer) TakeCase(mw bool) error {
 // that the Lawyer has. The arguments passed to this
 // function should not include the binary name.
 func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
-	// command := arguments
+	commandArgs := arguments
 
 	// Extract all flags up to a command
 	var flags []string
@@ -106,7 +106,7 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 			flags = append(flags, arg)
 
 			// Shave off this flag
-			// command = command[1:]
+			commandArgs = commandArgs[1:]
 		} else {
 			break
 		}
@@ -116,12 +116,54 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 	for _, f := range flags {
 		if l.ShowVersion && (f == "-v" || f == "--version") {
 			l.PrintVersion()
+			os.Exit(0)
+		}
+
+		if f == "-h" || f == "--help" {
+			l.PrintUsage()
+			os.Exit(0)
 		}
 	}
 
+	// Check if command exists
+	if len(commandArgs) == 0 {
+		if mw {
+			l.PrintError("no command specified")
+		}
+
+		return ErrNoCommand
+	}
+
+	// Check if command is specified with the Lawyer
+	cmd := strings.ToUpper(commandArgs[0])
+	var subArgument SubArgument
+	var commandSpecified bool
+	for _, sa := range l.SubArguments {
+		name := strings.ToUpper(sa.Name)
+		if cmd == name {
+			subArgument = sa
+			commandSpecified = true
+			break
+		}
+	}
+
+	if !commandSpecified {
+		if mw {
+			l.PrintError("unknown command '" + commandArgs[0] + "'")
+		}
+
+		return ErrUnknownCommand
+	}
+
+	// Try to dispute appropriate command
+	err := subArgument.Argument.DisputeCustom(commandArgs[1:], mw)
+	if err != nil {
+		return err
+	}
+
 	// Try to dispute the default flags
-	err := l.defaultArgument.DisputeCustom(flags, mw)
-	if !mw && err != nil {
+	err = l.defaultArgument.DisputeCustom(flags, mw)
+	if err != nil {
 		return err
 	}
 

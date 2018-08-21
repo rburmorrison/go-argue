@@ -18,9 +18,7 @@ func printFact(w int, s int, f Fact) {
 // Argument's usage line. This will exit the program
 // with an error code of 1.
 func (a Argument) PrintError(msg string) {
-	fmt.Printf("Error: %v\n", msg)
-	fmt.Printf("Run \"%v --help\" to see usage information\n", os.Args[0])
-	os.Exit(1)
+	printError(msg)
 }
 
 // PrintUsage writes the usage information of the

@@ -2,8 +2,17 @@ package argue
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
+
+// PrintError accepts a message and will print it
+// as an error message along with the received
+// Lawyer's usage line. This will exit the program
+// with an error code of 1.
+func (l Lawyer) PrintError(msg string) {
+	printError(msg)
+}
 
 // PrintUsage writes the usage information of the
 // recieved Lawyer to the standard output.
@@ -46,6 +55,19 @@ func (l Lawyer) PrintUsage() {
 	if l.ShowDesc {
 		fmt.Println(l.Description + "\n")
 	}
+
+	// Print usage line
+	fmt.Printf("Usage: %s", os.Args[0])
+	for _, f := range l.defaultArgument.FlagFacts {
+		if f.Type == FactTypeBool {
+			fmt.Printf(" [--%s]", f.Name)
+		} else {
+			fmt.Printf(" [--%s VALUE]", f.Name)
+		}
+	}
+	fmt.Print(" COMMAND")
+	fmt.Println()
+	fmt.Println()
 
 	// Print flags
 	fmt.Println("Flags:")
