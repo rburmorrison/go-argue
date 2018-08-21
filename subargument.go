@@ -6,5 +6,11 @@ type SubArgument struct {
 	Name     string
 	Help     string
 	Argument Argument
-	Handler  func()
+	handler  func(arg *Argument)
+}
+
+// SetHandler sets the Handler field of SubArgument
+// to the function provided
+func (sa *SubArgument) SetHandler(f func(arg *Argument)) {
+	sa.handler = f
 }

@@ -74,7 +74,7 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 	sarg.Name = n
 	sarg.Help = h
 	sarg.Argument = arg
-	sarg.Handler = nil
+	sarg.handler = nil
 
 	l.SubArguments = append(l.SubArguments, &sarg)
 	return &sarg
@@ -181,8 +181,8 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 	}
 
 	// Run the handler if it is specified
-	if subArgument.Handler != nil {
-		subArgument.Handler()
+	if subArgument.handler != nil {
+		subArgument.handler(&subArgument.Argument)
 	}
 
 	return nil
