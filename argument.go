@@ -20,7 +20,7 @@ type Argument struct {
 	FlagFacts       []*Fact
 	ShowDesc        bool
 	ShowVersion     bool
-	CommandSuffix   string
+	commandSuffix   string
 }
 
 func newArgumentFromStruct(agmt Argument, str interface{}) Argument {

@@ -41,13 +41,13 @@ func NewEmptyLawyer() Lawyer {
 // AddFact adds a fact to the Lawyer. Facts may not
 // be positional as that would conflict with the
 // sub-arguments.
-func (l *Lawyer) AddFact(name string, help string, req bool, v interface{}) {
+func (l *Lawyer) AddFact(name string, help string, v interface{}) *Fact {
 	name = StandardizeFactName(name)
 	if _, ok := l.defaultArgument.NameExists(name); ok {
 		panic("argument: fact name already exits within this lawyer")
 	}
 
-	l.defaultArgument.AddFlagFact(name, help, v).SetRequired(req)
+	return l.defaultArgument.AddFlagFact(name, help, v)
 }
 
 // AddArgument offers a new argument to the Lawyer
@@ -59,7 +59,7 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 	}
 
 	// Add command suffix
-	arg.CommandSuffix = strings.ToLower(n)
+	arg.commandSuffix = strings.ToLower(n)
 
 	// Make sub-arugment
 	var sarg SubArgument

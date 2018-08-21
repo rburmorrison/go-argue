@@ -65,8 +65,7 @@ func (l Lawyer) PrintUsage() {
 			fmt.Printf(" [--%s VALUE]", f.Name)
 		}
 	}
-	fmt.Print(" COMMAND")
-	fmt.Println()
+	fmt.Println(" COMMAND")
 	fmt.Println()
 
 	// Print flags

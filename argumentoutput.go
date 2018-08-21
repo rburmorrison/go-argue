@@ -20,8 +20,8 @@ func printFact(w int, s int, f Fact) {
 func (a Argument) PrintError(msg string) {
 	fmt.Printf("Error: %v\n", msg)
 	fmt.Printf("Run \"%v", os.Args[0])
-	if a.CommandSuffix != "" {
-		fmt.Print(" " + a.CommandSuffix)
+	if a.commandSuffix != "" {
+		fmt.Print(" " + a.commandSuffix)
 	}
 	fmt.Print(" --help\" to see usage information\n")
 	os.Exit(1)
@@ -63,8 +63,8 @@ func (a Argument) PrintUsage() {
 
 	// Print usage line
 	fmt.Printf("Usage: %s", os.Args[0])
-	if a.CommandSuffix != "" {
-		fmt.Print(" " + a.CommandSuffix)
+	if a.commandSuffix != "" {
+		fmt.Print(" " + a.commandSuffix)
 	}
 	for _, f := range a.FlagFacts {
 		if f.Type == FactTypeBool {
