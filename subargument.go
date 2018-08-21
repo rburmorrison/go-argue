@@ -6,4 +6,5 @@ type SubArgument struct {
 	Name     string
 	Help     string
 	Argument Argument
+	Handler  func()
 }

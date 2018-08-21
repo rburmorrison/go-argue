@@ -11,7 +11,7 @@ import (
 type Lawyer struct {
 	Description  string
 	Version      string
-	SubArguments []SubArgument
+	SubArguments []*SubArgument
 	ShowDesc     bool
 	ShowVersion  bool
 
@@ -50,6 +50,14 @@ func (l *Lawyer) AddFact(name string, help string, v interface{}) *Fact {
 	return l.defaultArgument.AddFlagFact(name, help, v)
 }
 
+// AddArgumentFromStruct offers a new argument to the
+// Lawyer with the passed parameters: name, help, and
+// the argument to add.
+func (l *Lawyer) AddArgumentFromStruct(n string, h string, str interface{}) *SubArgument {
+	arg := NewEmptyArgumentFromStruct(str)
+	return l.AddArgument(n, h, arg)
+}
+
 // AddArgument offers a new argument to the Lawyer
 // with the passed parameters: name, help, and the
 // argument to add.
@@ -66,8 +74,9 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 	sarg.Name = n
 	sarg.Help = h
 	sarg.Argument = arg
+	sarg.Handler = nil
 
-	l.SubArguments = append(l.SubArguments, sarg)
+	l.SubArguments = append(l.SubArguments, &sarg)
 	return &sarg
 }
 
@@ -129,6 +138,12 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 		}
 	}
 
+	// Try to dispute the default flags
+	err := l.defaultArgument.DisputeCustom(flags, mw)
+	if err != nil {
+		return err
+	}
+
 	// Check if command exists
 	if len(commandArgs) == 0 {
 		if mw {
@@ -140,7 +155,7 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 
 	// Check if command is specified with the Lawyer
 	cmd := strings.ToUpper(commandArgs[0])
-	var subArgument SubArgument
+	var subArgument *SubArgument
 	var commandSpecified bool
 	for _, sa := range l.SubArguments {
 		name := strings.ToUpper(sa.Name)
@@ -160,15 +175,14 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 	}
 
 	// Try to dispute appropriate command
-	err := subArgument.Argument.DisputeCustom(commandArgs[1:], mw)
+	err = subArgument.Argument.DisputeCustom(commandArgs[1:], mw)
 	if err != nil {
 		return err
 	}
 
-	// Try to dispute the default flags
-	err = l.defaultArgument.DisputeCustom(flags, mw)
-	if err != nil {
-		return err
+	// Run the handler if it is specified
+	if subArgument.Handler != nil {
+		subArgument.Handler()
 	}
 
 	return nil
