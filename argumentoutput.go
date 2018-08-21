@@ -18,7 +18,13 @@ func printFact(w int, s int, f Fact) {
 // Argument's usage line. This will exit the program
 // with an error code of 1.
 func (a Argument) PrintError(msg string) {
-	printError(msg)
+	fmt.Printf("Error: %v\n", msg)
+	fmt.Printf("Run \"%v", os.Args[0])
+	if a.CommandSuffix != "" {
+		fmt.Print(" " + a.CommandSuffix)
+	}
+	fmt.Print(" --help\" to see usage information\n")
+	os.Exit(1)
 }
 
 // PrintUsage writes the usage information of the
@@ -57,6 +63,9 @@ func (a Argument) PrintUsage() {
 
 	// Print usage line
 	fmt.Printf("Usage: %s", os.Args[0])
+	if a.CommandSuffix != "" {
+		fmt.Print(" " + a.CommandSuffix)
+	}
 	for _, f := range a.FlagFacts {
 		if f.Type == FactTypeBool {
 			fmt.Printf(" [--%s]", f.Name)

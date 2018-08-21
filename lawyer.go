@@ -58,6 +58,10 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 		panic("argue: this name already exists as a sub-argument")
 	}
 
+	// Add command suffix
+	arg.CommandSuffix = strings.ToLower(n)
+
+	// Make sub-arugment
 	var sarg SubArgument
 	sarg.Name = n
 	sarg.Help = h
