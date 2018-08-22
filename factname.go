@@ -17,7 +17,7 @@ func StandardizeFactName(n string) string {
 	return n
 }
 
-// UpperFactName returns the upper case equivalent
+// UpperFactName returns the uppercase equivalent
 // of a fact name.
 func UpperFactName(n string) string {
 	replacer := strings.NewReplacer(" ", "", "-", "")
