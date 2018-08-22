@@ -153,8 +153,9 @@ func main() {
 	var two commTwo
 	var variable bool
 
-	// 3. Create the Lawyer and add the arguments and
-	//    flags
+	// 3. Create the Lawyer, add the arguments and flags,
+	//    and add the function to run if a command is run
+	//    by the user
 	law := argue.NewLawyer("This is a test of the arugment package.", "x.x.x")
 	law.AddFact("test", "this is just a test flag", &variable)
 	law.AddArgumentFromStruct("one", "this is the first", &one).SetHandler(func(v interface{}) {
@@ -180,8 +181,28 @@ func main() {
 }
 ```
 
-Running `yourbinary --help` will show you the usage information that is a bit different than what you'd see when you use a single argument. A handler can be attached to an Argument, and the Lawyer will call that function if that command is run by the user. This allows you to separate concerns. 
+The usage output for this code would look like this:
 
+```
+[user@localhost Desktop]$ yourbinary --help
+yourbinary x.x.x
+This is a test of the arugment package.
+
+Usage: yourbinary [--test] COMMAND
+
+Flags:
+  -t, --test       this is just a test flag
+  -h, --help       display this help and exit
+  -v, --version    display version and exit
+
+Commands:
+  one    this is the first
+  two    this is the second
+
+Run 'yourbinary <command> --help' for details about a command.
+```
+
+Running `yourbinary <command> --help` will print the usage output of the argument that represents that command.
 ## Purpose
 
 Why did I create Argue? After all, there are plenty of other [argument parsing packages](https://github.com/avelino/awesome-go#command-line) for Go out there. For me, the pacakges that I tried from this list had at least one of three problems. The first problem was that they were too verbose and cumbersome. When I am creating a command-line application, I want to spend as little time as possible on writing the code to parse arguments properly. The second problem was ugly usage output. The usage output, to me, is the most important part. I want my users to be able to understand how to use my tool without getting distracted by formatting misalignment. They should be able to see the output and know exactly where everything is. The third problem was the lack of sub-command support. Some packages were perfect, but I couldn't use them for all my projects because I couldn't scale them to use sub-commands.
