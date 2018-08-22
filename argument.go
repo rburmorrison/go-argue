@@ -20,7 +20,9 @@ type Argument struct {
 	FlagFacts       []*Fact
 	ShowDesc        bool
 	ShowVersion     bool
-	commandSuffix   string
+
+	commandSuffix string
+	baseStruct    interface{}
 }
 
 func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
@@ -93,6 +95,7 @@ func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
 		}
 	}
 
+	agmt.baseStruct = str
 	return agmt
 }
 

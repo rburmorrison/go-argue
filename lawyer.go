@@ -2,6 +2,7 @@ package argue
 
 import (
 	"os"
+	"reflect"
 	"strings"
 )
 
@@ -182,7 +183,12 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 
 	// Run the handler if it is specified
 	if subArgument.handler != nil {
-		subArgument.handler(&subArgument.Argument)
+		if subArgument.Argument.baseStruct != nil {
+			val := reflect.ValueOf(subArgument.Argument.baseStruct)
+			subArgument.handler(reflect.Indirect(val).Interface())
+		} else {
+			subArgument.handler(nil)
+		}
 	}
 
 	return nil
