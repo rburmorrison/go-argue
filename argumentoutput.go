@@ -28,7 +28,7 @@ func (a Argument) PrintError(msg string) {
 }
 
 // PrintUsage writes the usage information of the
-// recieved Argument to the standard output.
+// received Argument to the standard output.
 func (a Argument) PrintUsage() {
 	spacing := 4
 

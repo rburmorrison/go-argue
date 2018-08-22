@@ -15,7 +15,7 @@ func (l Lawyer) PrintError(msg string) {
 }
 
 // PrintUsage writes the usage information of the
-// recieved Lawyer to the standard output.
+// received Lawyer to the standard output.
 func (l Lawyer) PrintUsage() {
 	spacing := 4
 

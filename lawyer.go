@@ -70,7 +70,7 @@ func (l *Lawyer) AddArgument(n string, h string, arg Argument) *SubArgument {
 	// Add command suffix
 	arg.commandSuffix = strings.ToLower(n)
 
-	// Make sub-arugment
+	// Make sub-argument
 	var sarg SubArgument
 	sarg.Name = n
 	sarg.Help = h

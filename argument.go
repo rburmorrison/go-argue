@@ -467,7 +467,7 @@ func (a Argument) InitialExists(i byte) (*Fact, bool) {
 }
 
 // GenerateInitial accepts a name and returns an
-// appropriate inital for it based on existing fact
+// appropriate initial for it based on existing fact
 // initials. If all reasonable initials are taken,
 // 0 will be returned instead.
 func (a Argument) GenerateInitial(n string) byte {
