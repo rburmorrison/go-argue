@@ -1,4 +1,4 @@
-# Argue 2.x.x
+# Argue 2.3.1
 
 A sassy Golang package for parsing command-line arguments.
 
@@ -37,7 +37,7 @@ func main() {
 	var tOther int
 
 	// 2. Create your argument and facts
-	agmt := argue.NewArgument("This is a test of the argument package.", "2.3.1") // or argue.NewEmptyArgument()
+	agmt := argue.NewArgument("This is a test of the argument package.", "x.x.x") // or argue.NewEmptyArgument()
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
 	agmt.AddFlagFact("bool", "this is a boolean", &tBool)
@@ -62,7 +62,7 @@ Usage information is automatically generated and can be viewed with `yourbinary 
 
 ```
 [user@localhost Desktop]$ yourbinary --help
-yourbinary 2.3.1
+yourbinary x.x.x
 This is a test of the argument library.
 
 Usage: yourbinary [--int VALUE] [--string VALUE] [--uint VALUE] POS OTHER
