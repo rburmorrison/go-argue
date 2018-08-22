@@ -44,7 +44,7 @@ func newArgumentFromStruct(agmt Argument, str interface{}) Argument {
 		tag := field.Tag
 
 		// Create variables that the fact will need
-		init := byte(0)
+		var init byte
 		positional := false
 		required := false
 		name := breakCammelCase(field.Name)
