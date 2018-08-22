@@ -150,6 +150,14 @@ func (a Argument) Dispute(strict bool) error {
 	return a.DisputeCustom(os.Args[1:], strict)
 }
 
+func handleError(a Argument, strict bool, msg string, err error) error {
+	if strict {
+		a.PrintError(msg)
+	}
+
+	return err
+}
+
 // DisputeCustom uses the facts in the received
 // argument to parse the passed arguments. An error
 // will be returned if Dispute fails to parse the
@@ -178,21 +186,15 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 		_, nok := a.DressedNameExists(k)
 		_, iok := a.DressedInitialExists(k)
 		if !nok && !iok {
-			if strict {
-				a.PrintError("unknown flag " + k + " provided")
-			}
-
-			return ErrUnknownFlag
+			msg := "unknown flag " + k + " provided"
+			return handleError(a, strict, msg, ErrUnknownFlag)
 		}
 	}
 
 	// Check for extra positional arguments
 	if len(ps) > len(a.PositionalFacts) {
-		if strict {
-			a.PrintError("too many positional arguments provided")
-		}
-
-		return ErrExtraPositionals
+		msg := "too many positional arguments provided"
+		return handleError(a, strict, msg, ErrExtraPositionals)
 	}
 
 	// Check if all required flags are present
@@ -205,11 +207,8 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 		}
 
 		if !flagFound {
-			if strict {
-				a.PrintError(fmt.Sprintf("flag %s is required", f.DressedName()))
-			}
-
-			return ErrMissingFlag
+			msg := fmt.Sprintf("flag %s is required", f.DressedName())
+			return handleError(a, strict, msg, ErrMissingFlag)
 		}
 	}
 
@@ -222,15 +221,14 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 	}
 
 	if lastPos > -1 && len(ps) < lastPos+1 {
-		if strict {
-			if lastPos+1 == 1 {
-				a.PrintError(fmt.Sprintf("expected %d positional argument, but got %d", lastPos+1, len(ps)))
-			} else {
-				a.PrintError(fmt.Sprintf("expected %d positional arguments, but got %d", lastPos+1, len(ps)))
-			}
+		// Adjust grammar to number of arguments
+		if lastPos+1 == 1 {
+			msg := fmt.Sprintf("expected %d positional argument, but got %d", lastPos+1, len(ps))
+			return handleError(a, strict, msg, ErrMissingPositionals)
 		}
 
-		return ErrMissingPositionals
+		msg := fmt.Sprintf("expected %d positional arguments, but got %d", lastPos+1, len(ps))
+		return handleError(a, strict, msg, ErrMissingPositionals)
 	}
 
 	// Set values for positional facts
@@ -238,11 +236,8 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 		fact := a.PositionalFacts[i]
 		err := fact.SetValue(s)
 		if err != nil {
-			if strict {
-				a.PrintError("positional argument " + UpperFactName(fact.Name) + " " + err.Error())
-			}
-
-			return ErrWrongType
+			msg := "positional argument " + UpperFactName(fact.Name) + " " + err.Error()
+			return handleError(a, strict, msg, ErrWrongType)
 		}
 	}
 
@@ -250,11 +245,8 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 	for k, v := range fm {
 		// Check if the value provided was nil
 		if v == nil {
-			if strict {
-				a.PrintError("no value was provided for " + k)
-			}
-
-			return ErrNilValue
+			msg := "no value was provided for " + k
+			return handleError(a, strict, msg, ErrNilValue)
 		}
 
 		// Get the fact that correspons with the key
@@ -266,11 +258,8 @@ func (a Argument) DisputeCustom(arguments []string, strict bool) error {
 
 		err := f.SetValue(v)
 		if err != nil {
-			if strict {
-				a.PrintError(k + " " + err.Error())
-			}
-
-			return ErrWrongType
+			msg := k + " " + err.Error()
+			return handleError(a, strict, msg, ErrWrongType)
 		}
 	}
 

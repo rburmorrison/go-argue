@@ -22,7 +22,7 @@ const (
 )
 
 // GetFactType accepts an interface and will return
-// it's equivelant FactType, or an error if it
+// it's equivalent FactType, or an error if it
 // doesn't match a FactType.
 func GetFactType(v interface{}) (FactType, error) {
 	var t FactType
