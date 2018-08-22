@@ -182,6 +182,12 @@ func main() {
 
 Running `yourbinary --help` will show you the usage information that is a bit different than what you'd see when you use a single argument. A handler can be attached to an Argument, and the Lawyer will call that function if that command is run by the user. This allows you to separate concerns. 
 
+## Purpose
+
+Why did I create Argue? After all, there are plenty of other [argument parsing packages](https://github.com/avelino/awesome-go#command-line) for Go out there. For me, the pacakges that I tried from this list had at least one of three problems. The first problem was that they were too verbose and cumbersome. When I am creating a command-line application, I want to spend as little time as possible on the tedious parts of parsing the arguments properly. The second problem was ugly usage output. The usage output, to me, is the most important part. I want my users to be able to understand how to use my tool without getting distracted by formatting misalignment. They should be able to see the output and know exactly where everything is. The third problem was the lack of sub-command support. Some packages were perfect, but I couldn't use them for all my projects because I couldn't scale them to use sub-commands.
+
+I created Argue to solve these problems. Argue has clean output, support for auto-generating a parser from a struct (or manually, if you prefer), and simple-to-implement sub-commands. If you have any suggestions for Argue, be sure to submit an issue to this repo detailing what you'd like to see in the future.
+
 ## Bugs
 
 If you come across any bugs while using Argue, please submit an issue to this repo.
