@@ -16,7 +16,7 @@ Run `go get github.com/rburmorrison/go-argue`.
 
 ### Basic
 
-Creating an argument parser with argue takes four steps.
+Creating an argument parser with Argue takes four steps.
 
 ```go
 package main
@@ -37,7 +37,7 @@ func main() {
 	var tOther int
 
 	// 2. Create your argument and facts
-	agmt := argue.NewArgument("This is a test of the argument package.", "2.3.0") // or argue.NewEmptyArgument()
+	agmt := argue.NewArgument("This is a test of the argument package.", "2.3.1") // or argue.NewEmptyArgument()
 	agmt.AddFlagFact("uint", "this is a uint", &tUInt)
 	agmt.AddFlagFact("int", "this is an integer", &tInt)
 	agmt.AddFlagFact("bool", "this is a boolean", &tBool)
@@ -62,7 +62,7 @@ Usage information is automatically generated and can be viewed with `yourbinary 
 
 ```
 [user@localhost Desktop]$ yourbinary --help
-yourbinary 2.0.0
+yourbinary 2.3.1
 This is a test of the argument library.
 
 Usage: yourbinary [--int VALUE] [--string VALUE] [--uint VALUE] POS OTHER
@@ -134,6 +134,7 @@ import (
 	argue "github.com/rburmorrison/go-argue"
 )
 
+// 1. Create argument structs
 type commOne struct {
 	Field1     int  `options:"required,positional" help:"this is field1"`
 	BoolField2 bool `init:"a" help:"this is boolean2"`
@@ -141,27 +142,41 @@ type commOne struct {
 }
 
 type commTwo struct {
-	Var1    int  `options:"required,positional" help:"this is field1"`
-	Second2 bool `init:"a" help:"this is boolean2"`
+	Var1    int  `options:"required,positional" help:"this is var1"`
+	Second2 bool `init:"a" help:"this is second2"`
 	Change  bool `init:""`
 }
 
 func main() {
+	// 2. Create the placeholder variables
 	var one commOne
 	var two commTwo
 	var variable bool
+
+	// 3. Create the Lawyer and add the arguments and
+	//    flags
 	law := argue.NewLawyer("This is a test of the arugment package.", "x.x.x")
 	law.AddFact("test", "this is just a test flag", &variable)
-	law.AddArgumentFromStruct("one", "this is the first", &one).SetHandler(func(arg *argue.Argument) {
-		fmt.Println("one was run!")
+	law.AddArgumentFromStruct("one", "this is the first", &one).SetHandler(func(v interface{}) {
+		////////////////////////////////////////////////////////
+		// NOTE: v contains the struct that was used to auto- //
+		// generate the argument. If the argument was created //
+		// manually, nil will be provided instead.            //
+		////////////////////////////////////////////////////////
+
+		// 5. Handle the data
+		data := v.(commOne)
+		fmt.Println(data.BoolField2)
 	})
 
-	law.AddArgumentFromStruct("two", "this is the second", &two).SetHandler(func(arg *argue.Argument) {
-		fmt.Println("two was run!")
+	law.AddArgumentFromStruct("two", "this is the second", &two).SetHandler(func(v interface{}) {
+		// 5. Handle the data
+		data := v.(commTwo)
+		fmt.Println(data.Var1)
 	})
 
+	// 4. Have the Lawyer take the case
 	law.TakeCase(true)
-	fmt.Println("variable", variable)
 }
 ```
 
@@ -169,7 +184,7 @@ Running `yourbinary --help` will show you the usage information that is a bit di
 
 ## Bugs
 
-If you come across any bugs while using argue, please submit an issue to this repo.
+If you come across any bugs while using Argue, please submit an issue to this repo.
 
 ## Roadmap
 
