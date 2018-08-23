@@ -1,4 +1,4 @@
-# Argue 2.3.1
+# Argue 2.3.2
 
 A sassy Golang package for parsing command-line arguments.
 

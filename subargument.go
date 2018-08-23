@@ -6,7 +6,8 @@ type SubArgument struct {
 	Name     string
 	Help     string
 	Argument Argument
-	handler  func(v interface{})
+
+	handler func(*Lawyer, interface{})
 }
 
 // SetHandler sets the Handler field of SubArgument
@@ -15,6 +16,6 @@ type SubArgument struct {
 // struct, that struct will be passed to the handler
 // function. If it was created manually, nil will be
 // passed to the handler instead.
-func (sa *SubArgument) SetHandler(f func(v interface{})) {
+func (sa *SubArgument) SetHandler(f func(*Lawyer, interface{})) {
 	sa.handler = f
 }

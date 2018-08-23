@@ -185,9 +185,9 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 	if subArgument.handler != nil {
 		if subArgument.Argument.baseStruct != nil {
 			val := reflect.ValueOf(subArgument.Argument.baseStruct)
-			subArgument.handler(reflect.Indirect(val).Interface())
+			subArgument.handler(&l, reflect.Indirect(val).Interface())
 		} else {
-			subArgument.handler(nil)
+			subArgument.handler(&l, nil)
 		}
 	}
 
