@@ -16,6 +16,7 @@ type Lawyer struct {
 	ShowDesc     bool
 	ShowVersion  bool
 
+	middleware      func(*Lawyer)
 	defaultArgument Argument
 }
 
@@ -49,6 +50,14 @@ func (l *Lawyer) AddFact(name string, help string, v interface{}) *Fact {
 	}
 
 	return l.defaultArgument.AddFlagFact(name, help, v)
+}
+
+// SetMiddleware sets a function that will be called
+// before any SubArgument handlers are called. This
+// is often used to handle the individual facts that
+// the Layer has defined or to do universal checks.
+func (l *Lawyer) SetMiddleware(f func(*Lawyer)) {
+	l.middleware = f
 }
 
 // AddArgumentFromStruct offers a new argument to the
@@ -179,6 +188,11 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 	err = subArgument.Argument.DisputeCustom(commandArgs[1:], mw)
 	if err != nil {
 		return err
+	}
+
+	// Run middleware if it is specified
+	if l.middleware != nil {
+		l.middleware(&l)
 	}
 
 	// Run the handler if it is specified
