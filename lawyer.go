@@ -155,14 +155,6 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 		}
 	}
 
-	if len(commandArgs) == 0 {
-		if mw {
-			l.PrintError("no valid command was provided")
-		}
-
-		return ErrNoCommand
-	}
-
 	// Check if --help or --version are present
 	for _, f := range flags {
 		if l.ShowVersion && (f == "-v" || f == "--version") {
@@ -174,6 +166,15 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 			l.PrintUsage()
 			os.Exit(0)
 		}
+	}
+
+	// Check if no command was provided
+	if len(commandArgs) == 0 {
+		if mw {
+			l.PrintError("no valid command was provided")
+		}
+
+		return ErrNoCommand
 	}
 
 	// Try to dispute the default flags
