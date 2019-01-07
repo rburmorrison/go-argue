@@ -123,7 +123,7 @@ func main() {
 ```
 
 ### Sub-Commands
-When you have more than one argument, you might want to use a Lawyer to help you get them straight. Here is full-featured example of how to use a Lawyer:
+When you have more https://github.com/rburmorrison/go-arguethan one argument, you might want to use a Lawyer to help you get them straight. Here is full-featured example of how to use a Lawyer:
 
 ```go
 package main
@@ -192,7 +192,7 @@ The usage output for this code would look like this:
 ```
 [user@localhost Desktop]$ yourbinary --help
 yourbinary x.x.x
-This is a test of the arugment package.
+This is a test of the argument package.
 
 Usage: yourbinary [--test] COMMAND
 
