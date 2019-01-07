@@ -155,7 +155,7 @@ func main() {
 
 	// 3. Create the Lawyer and add the arguments and
 	//    flags
-	law := argue.NewLawyer("This is a test of the arugment package.", "2.2.0")
+	law := argue.NewLawyer("This is a test of the argument package.", "2.2.0")
 	law.AddFact("test", "this is just a test flag", &variable)
 	law.SetMiddleware(func(*argue.Lawyer) {
 		// 4.5. Middleware runs before any handlers do
