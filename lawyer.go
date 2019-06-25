@@ -16,6 +16,7 @@ type Lawyer struct {
 	ShowDesc     bool
 	ShowVersion  bool
 
+	middleware      func(*Lawyer)
 	defaultArgument Argument
 }
 
@@ -49,6 +50,14 @@ func (l *Lawyer) AddFact(name string, help string, v interface{}) *Fact {
 	}
 
 	return l.defaultArgument.AddFlagFact(name, help, v)
+}
+
+// SetMiddleware sets a function that will be called
+// before any SubArgument handlers are called. This
+// is often used to handle the individual facts that
+// the Layer has defined or to do universal checks.
+func (l *Lawyer) SetMiddleware(f func(*Lawyer)) {
+	l.middleware = f
 }
 
 // AddArgumentFromStruct offers a new argument to the
@@ -106,6 +115,18 @@ func (l Lawyer) TakeCase(mw bool) error {
 	return l.TakeCustomCase(os.Args[1:], mw)
 }
 
+func (l Lawyer) commandSpecified(cmd string) (*SubArgument, bool) {
+	cmd = strings.ToUpper(cmd)
+	for _, sa := range l.SubArguments {
+		name := strings.ToUpper(sa.Name)
+		if cmd == name {
+			return sa, true
+		}
+	}
+
+	return &SubArgument{}, false
+}
+
 // TakeCustomCase accepts some arguments and will
 // parse through them according to the sub-commands
 // that the Lawyer has. The arguments passed to this
@@ -122,7 +143,15 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 			// Shave off this flag
 			commandArgs = commandArgs[1:]
 		} else {
-			break
+			_, ok := l.commandSpecified(arg)
+			if ok {
+				break
+			} else {
+				flags = append(flags, arg)
+
+				// Shave off this flag
+				commandArgs = commandArgs[1:]
+			}
 		}
 	}
 
@@ -139,46 +168,31 @@ func (l Lawyer) TakeCustomCase(arguments []string, mw bool) error {
 		}
 	}
 
+	// Check if no command was provided
+	if len(commandArgs) == 0 {
+		if mw {
+			l.PrintError("no valid command was provided")
+		}
+
+		return ErrNoCommand
+	}
+
 	// Try to dispute the default flags
 	err := l.defaultArgument.DisputeCustom(flags, mw)
 	if err != nil {
 		return err
 	}
 
-	// Check if command exists
-	if len(commandArgs) == 0 {
-		if mw {
-			l.PrintError("no command specified")
-		}
-
-		return ErrNoCommand
-	}
-
-	// Check if command is specified with the Lawyer
-	cmd := strings.ToUpper(commandArgs[0])
-	var subArgument *SubArgument
-	var commandSpecified bool
-	for _, sa := range l.SubArguments {
-		name := strings.ToUpper(sa.Name)
-		if cmd == name {
-			subArgument = sa
-			commandSpecified = true
-			break
-		}
-	}
-
-	if !commandSpecified {
-		if mw {
-			l.PrintError("unknown command '" + commandArgs[0] + "'")
-		}
-
-		return ErrUnknownCommand
-	}
-
 	// Try to dispute appropriate command
+	subArgument, _ := l.commandSpecified(commandArgs[0])
 	err = subArgument.Argument.DisputeCustom(commandArgs[1:], mw)
 	if err != nil {
 		return err
+	}
+
+	// Run middleware if it is specified
+	if l.middleware != nil {
+		l.middleware(&l)
 	}
 
 	// Run the handler if it is specified

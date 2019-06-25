@@ -1,4 +1,4 @@
-# Argue 2.3.2
+# Argue 2.4.2
 
 A sassy Golang package for parsing command-line arguments.
 
@@ -123,7 +123,7 @@ func main() {
 ```
 
 ### Sub-Commands
-When you have more than one argument, you might want to use a Lawyer to help you get them straight. Here is full-featured example of how to use a Lawyer:
+When you have more https://github.com/rburmorrison/go-arguethan one argument, you might want to use a Lawyer to help you get them straight. Here is full-featured example of how to use a Lawyer:
 
 ```go
 package main
@@ -131,7 +131,7 @@ package main
 import (
 	"fmt"
 
-	argue "github.com/rburmorrison/go-argue"
+	"github.com/rburmorrison/go-argue"
 )
 
 // 1. Create argument structs
@@ -151,30 +151,36 @@ func main() {
 	// 2. Create the placeholder variables
 	var one commOne
 	var two commTwo
-	var variable bool
+	var variable string
 
-	// 3. Create the Lawyer, add the arguments and flags,
-	//    and add the function to run if a command is run
-	//    by the user
-	law := argue.NewLawyer("This is a test of the arugment package.", "x.x.x")
+	// 3. Create the Lawyer and add the arguments and
+	//    flags
+	law := argue.NewLawyer("This is a test of the argument package.", "2.2.0")
 	law.AddFact("test", "this is just a test flag", &variable)
-	law.AddArgumentFromStruct("one", "this is the first", &one).SetHandler(func(v interface{}) {
-		////////////////////////////////////////////////////////
-		// NOTE: v contains the struct that was used to auto- //
-		// generate the argument. If the argument was created //
-		// manually, nil will be provided instead.            //
-		////////////////////////////////////////////////////////
-
-		// 5. Handle the data
-		data := v.(commOne)
-		fmt.Println(data.BoolField2)
+	law.SetMiddleware(func(*argue.Lawyer) {
+		// 4.5. Middleware runs before any handlers do
+		fmt.Println(variable)
 	})
 
-	law.AddArgumentFromStruct("two", "this is the second", &two).SetHandler(func(v interface{}) {
-		// 5. Handle the data
-		data := v.(commTwo)
-		fmt.Println(data.Var1)
-	})
+	law.AddArgumentFromStruct("one", "this is the first", &one).
+		SetHandler(func(l *argue.Lawyer, v interface{}) {
+			////////////////////////////////////////////////////////
+			// NOTE: v contains the struct that was used to auto- //
+			// generate the argument. If the argument was created //
+			// manually, nil will be provided instead.            //
+			////////////////////////////////////////////////////////
+
+			// 5. Handle the data
+			data := v.(commOne)
+			fmt.Println(data.BoolField2)
+		})
+
+	law.AddArgumentFromStruct("two", "this is the second", &two).
+		SetHandler(func(l *argue.Lawyer, v interface{}) {
+			// 5. Handle the data
+			data := v.(commTwo)
+			fmt.Println(data.Var1)
+		})
 
 	// 4. Have the Lawyer take the case
 	law.TakeCase(true)
@@ -186,7 +192,7 @@ The usage output for this code would look like this:
 ```
 [user@localhost Desktop]$ yourbinary --help
 yourbinary x.x.x
-This is a test of the arugment package.
+This is a test of the argument package.
 
 Usage: yourbinary [--test] COMMAND
 
